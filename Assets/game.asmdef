@@ -7,7 +7,9 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Assembly-CSharp.dll"
+        "Assembly-CSharp.dll",
+        "Newtonsoft.Json.dll",
+        "Newtonsoft.Json.UnityConverters.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
