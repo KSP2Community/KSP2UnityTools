@@ -58,3 +58,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# IDEA
+.idea/
+
+# Copyrighted Packages
+Packages/KSP2_x64
