@@ -14,13 +14,15 @@ using Newtonsoft.Json.UnityConverters;
 using Newtonsoft.Json.UnityConverters.Configuration;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [CustomEditor(typeof(CorePartData))]
 public class PartEditor : Editor
 {
 
     private static bool _initialized = false;
-
+    private static readonly Color ComColor = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.5f);
+    
     // Just initialize all the conversion stuff
     private static void Initialize()
     {
@@ -28,6 +30,10 @@ public class PartEditor : Editor
             ?.Invoke(null, new object[] { });
         _initialized = true;
         Module_Engine mod;
+    }
+
+    private void OnSceneGUI()
+    {
     }
 
     public override void OnInspectorGUI()
@@ -54,5 +60,16 @@ public class PartEditor : Editor
         File.WriteAllText($"{Application.dataPath}/{core.data.partName}.json", json);
         AssetDatabase.Refresh();
         EditorUtility.DisplayDialog("Part Exported", $"Json is at: {Application.dataPath}/{core.data.partName}.json", "ok");
+    }
+    [DrawGizmo(GizmoType.Active | GizmoType.Selected)]
+    static void DrawGizmoForPartCoreData(CorePartData data, GizmoType gizmoType)
+    {
+        var centerOfMassPosition = data.Data.coMassOffset;
+        var localToWorldMatrix = data.transform.localToWorldMatrix;
+        centerOfMassPosition = localToWorldMatrix.MultiplyPoint(centerOfMassPosition);
+        Gizmos.DrawIcon(centerOfMassPosition, "com_icon.png",false);
+        var centerOfLiftPosition = data.Data.coLiftOffset;
+        centerOfLiftPosition = localToWorldMatrix.MultiplyPoint(centerOfLiftPosition);
+        Gizmos.DrawIcon(centerOfLiftPosition, "col_icon.png",false);
     }
 }
