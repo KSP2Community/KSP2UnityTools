@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using KSP;
 using UnityEditor;
@@ -9,6 +10,7 @@ using Cheese.Extensions;
 using KSP.IO;
 using KSP.Modules;
 using KSP.Sim.Definitions;
+using KSP.Sim.impl;
 using Newtonsoft.Json;
 using Newtonsoft.Json.UnityConverters;
 using Newtonsoft.Json.UnityConverters.Configuration;
@@ -46,15 +48,18 @@ public class PartEditor : Editor
         if (core == null) return;
         // Clear out the serialized part modules and reserialize them
         core.data.serializedPartModules.Clear();
-        foreach (var child in targetGO.GetComponents<PartBehaviourModule>())
+        foreach (var child in targetGO.GetComponents<Component>())
         {
-            child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.NonPublic)?.Invoke(child, new object[] {});
-            foreach (var data in child.DataModules.Values)
+            if (!(child is PartBehaviourModule partBehaviourModule)) continue;
+            var addMethod = child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                            child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.Public);
+            addMethod?.Invoke(child, new object[] { });
+            foreach (var data in partBehaviourModule.DataModules.Values)
             {
-                data.GetType().GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.NonPublic)
-                    ?.Invoke(data, new object[] { });
+                var rebuildMethod = data.GetType().GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.NonPublic) ?? data.GetType().GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.Public);
+                rebuildMethod?.Invoke(data, new object[] { });
             }
-            core.data.serializedPartModules.Add(new SerializedPartModule(child,false));
+            core.data.serializedPartModules.Add(new SerializedPartModule(partBehaviourModule,false));
         }
         var json = IOProvider.ToJson(core);
         File.WriteAllText($"{Application.dataPath}/{core.data.partName}.json", json);

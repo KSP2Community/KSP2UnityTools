@@ -641,6 +641,7 @@ GameObject:
   - component: {fileID: 2045490031}
   - component: {fileID: 2045490030}
   - component: {fileID: 2045490029}
+  - component: {fileID: 2045490035}
   m_Layer: 0
   m_Name: TestPart
   m_TagString: Untagged
@@ -1304,9 +1305,13 @@ MonoBehaviour:
         ModuleData:
         - Name: Data_Fairing
           Data: 
-      - Name: PartComponentModule_CompoundPart
+      - Name: PartComponentModule_DeployableControlSurface
         ModuleData:
-        - Name: Data_CompoundPart
+        - Name: Data_LiftingSurface
+          Data: 
+        - Name: Data_ControlSurface
+          Data: 
+        - Name: Data_DeployableControlSurface
           Data: 
       resourceSummary:
         Consumes:
@@ -1339,3 +1344,124 @@ MonoBehaviour:
       PickUpPointOffset: {x: 0, y: 0, z: 0}
       PickupRotationPointOffset: {x: 0, y: 0, z: 0}
     legacyModules: 
+--- !u!114 &2045490035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045490027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 235333479, guid: 3046f413347669c40bed1fd7b4c64202, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataLiftingSurface:
+    omnidirectional: 1
+    liftCurve:
+      fCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      _minTime: 3.4028235e+38
+      _maxTime: -3.4028235e+38
+    liftMachCurve:
+      fCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      _minTime: 3.4028235e+38
+      _maxTime: -3.4028235e+38
+    dragCurve:
+      fCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      _minTime: 3.4028235e+38
+      _maxTime: -3.4028235e+38
+    dragMachCurve:
+      fCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      _minTime: 3.4028235e+38
+      _maxTime: -3.4028235e+38
+    liftingSurfaceCurve: Default
+    transformDir: 2
+    transformSign: 1
+    transformName: 
+    nodeEnabled: 0
+    attachNodeName: 
+    deflectionLiftCoeff: 1.5
+    perpendicularOnly: 0
+    useInternalDragModel: 1
+    CoPOffset: {x: 0, y: 0, z: 0}
+  baseTransform: {fileID: 0}
+  debugThis: 0
+  dataCtrlSurface:
+    IsCtrlSurfaceActive: 0
+    LiftingCtrlSurfaceArea: 0
+    CoPressureCtrlSurfaceOffset: {x: 0, y: 0, z: 0}
+    CtrlSurfacePivotOffset: {x: 0, y: 0, z: 0}
+    CtrlTransformDir: 2
+    CtrlTransformRotAxis: 0
+    CtrlTransformSign: -1
+    CtrlSurfacePivotTransformName: obj_ctrlSrf
+    CtrlSurfaceRange: 15
+    CtrlSurfaceArea: 0.5
+    UseExponentialSpeed: 0
+    ActuatorSpeedNormalScale: 30
+    MirrorDeploy: 0
+    MeshAreaLiftMultiplier: 0.25
+    DisableLiftingSurfaceForce: 0
+    ApplyLiftSurfaceForceAtBase: 0
+    ApplyLiftSurfaceForceAtPivotMidpoint: 0
+  _ctrlSurface: {fileID: 0}
+  _deflectionDirection: 1
+  _referenceXform: {fileID: 0}
+  animator: {fileID: 0}
+  dataDeployableControlSurface: {}
