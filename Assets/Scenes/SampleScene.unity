@@ -778,7 +778,7 @@ MonoBehaviour:
       - 1
       - 1
       - 1
-      center: {x: 4.6299934, y: -24.184984, z: 10}
+      center: {x: 0, y: 0, z: 0}
       size: {x: 0.625, y: 0.3946495, z: 0.625}
       name: Default
       weight: 1

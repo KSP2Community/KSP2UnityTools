@@ -10,6 +10,7 @@ public class ModuleDragEditor : Editor
     [DrawGizmo(GizmoType.Active | GizmoType.Selected)]
     public static void DrawGizmosForDrag(Module_Drag moduleDrag, GizmoType gizmoType)
     {
+        if (!PartEditor.DragCubeGizmos) return;
         var mat = moduleDrag.gameObject.transform.localToWorldMatrix;
         var dataDrag = moduleDrag.GetType().GetField("dataDrag", BindingFlags.Instance | BindingFlags.NonPublic)
             ?.GetValue(moduleDrag) as Data_Drag;
