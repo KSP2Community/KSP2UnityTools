@@ -46,6 +46,7 @@ Shader "KSP2/Parts/Paintable"
         struct Input
         {
             float2 uv_MainTex;
+            float3 viewDir;
         };
 
         fixed4 _Color;
@@ -59,6 +60,7 @@ Shader "KSP2/Parts/Paintable"
         sampler2D _BumpMap;
 
         sampler2D _OcclusionMap;
+        half _OcclusionStrength;
         sampler2D _EmissionMap;
         fixed4 _EmissionColor;
 
@@ -67,6 +69,9 @@ Shader "KSP2/Parts/Paintable"
         fixed4 _PaintB;
         float _PaintGlossMapScale;
         bool _SmoothnessOverride;
+
+        fixed4 _RimColor;
+        float _RimFalloff;
 
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -97,9 +102,13 @@ Shader "KSP2/Parts/Paintable"
             o.Albedo = c;
             o.Metallic = MetallicValue.a;
             o.Smoothness = _Metallic * _GlossMapScale;
-            o.Emission = tex2D(_EmissionMap, IN.uv_MainTex) * _EmissionColor;
-            o.Occlusion = tex2D(_OcclusionMap, IN.uv_MainTex);
             o.Normal = UnpackNormal (tex2D(_BumpMap, IN.uv_MainTex));
+            o.Occlusion = tex2D(_OcclusionMap, IN.uv_MainTex);
+            o.Occlusion = o.Occlusion * _OcclusionStrength;
+            
+          half rim = 1.0 - saturate(dot (normalize(IN.viewDir), o.Normal));
+          o.Emission = tex2D(_EmissionMap, IN.uv_MainTex) * _EmissionColor + (_RimColor.rgb * pow (rim, _RimFalloff));
+
         }
         ENDCG
     }
