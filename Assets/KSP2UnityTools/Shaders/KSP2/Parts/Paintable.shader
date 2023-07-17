@@ -46,6 +46,11 @@ Shader "KSP2/Parts/Paintable"
         struct Input
         {
             float2 uv_MainTex;
+            float2 uv_MetallicGlossMap;
+            float2 uv_BumpMap;
+            float2 uv_OcclusionMap;
+            float2 uv_EmissionMap;
+            float2 uv_PaintMaskGlossMap;
             float3 viewDir;
         };
 
@@ -61,6 +66,7 @@ Shader "KSP2/Parts/Paintable"
 
         sampler2D _OcclusionMap;
         half _OcclusionStrength;
+
         sampler2D _EmissionMap;
         fixed4 _EmissionColor;
 
@@ -85,8 +91,8 @@ Shader "KSP2/Parts/Paintable"
         {
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            fixed4 PaintMaskColor = tex2D(_PaintMaskGlossMap, IN.uv_MainTex);
-            fixed4 MetallicValue = tex2D(_MetallicGlossMap, IN.uv_MainTex);
+            fixed4 PaintMaskColor = tex2D(_PaintMaskGlossMap, IN.uv_PaintMaskGlossMap);
+            fixed4 MetallicValue = tex2D(_MetallicGlossMap, IN.uv_MetallicGlossMap);
 
             fixed4 paintAColor = lerp(c.rgba, _PaintA * PaintMaskColor.g, _PaintA.a);
             c.rgba = lerp(c.rgba, paintAColor, PaintMaskColor.g);
@@ -94,20 +100,23 @@ Shader "KSP2/Parts/Paintable"
             c.rgba = lerp(c.rgba, paintBColor, PaintMaskColor.r);
 
             fixed4 paintColor = lerp(paintAColor, paintBColor, PaintMaskColor.r);
+            
+            _Metallic = MetallicValue.a;
 
             if(_SmoothnessOverride){
-                _Metallic =  PaintMaskColor.a * _PaintGlossMapScale * PaintMaskColor.g;
+                _Metallic = lerp(_Metallic, PaintMaskColor.a, _PaintA.a * PaintMaskColor.g);
+                _Metallic = lerp(_Metallic, PaintMaskColor.a, _PaintB.a * PaintMaskColor.r);
                 }
             
             o.Albedo = c;
-            o.Metallic = MetallicValue.a;
+            o.Metallic = MetallicValue.rgb;
             o.Smoothness = _Metallic * _GlossMapScale;
-            o.Normal = UnpackNormal (tex2D(_BumpMap, IN.uv_MainTex));
-            o.Occlusion = tex2D(_OcclusionMap, IN.uv_MainTex);
+            o.Normal = UnpackNormal (tex2D(_BumpMap, IN.uv_BumpMap));
+            o.Occlusion = tex2D(_OcclusionMap, IN.uv_OcclusionMap);
             o.Occlusion = o.Occlusion * _OcclusionStrength;
             
           half rim = 1.0 - saturate(dot (normalize(IN.viewDir), o.Normal));
-          o.Emission = tex2D(_EmissionMap, IN.uv_MainTex) * _EmissionColor + (_RimColor.rgb * pow (rim, _RimFalloff));
+          o.Emission = tex2D(_EmissionMap, IN.uv_EmissionMap) * _EmissionColor + (_RimColor.rgb * pow (rim, _RimFalloff));
 
         }
         ENDCG
