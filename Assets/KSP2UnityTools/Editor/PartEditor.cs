@@ -1,20 +1,11 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
 using KSP;
 using UnityEditor;
-using Cheese.Extensions;
 using KSP.IO;
 using KSP.Modules;
 using KSP.Sim.Definitions;
-using KSP.Sim.impl;
-using Newtonsoft.Json;
-using Newtonsoft.Json.UnityConverters;
-using Newtonsoft.Json.UnityConverters.Configuration;
-using UnityEditor.VersionControl;
+using KSP2UT.KSP2UnityTools;
 using UnityEngine;
 
 [CustomEditor(typeof(CorePartData))]
@@ -51,6 +42,40 @@ public class PartEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+        GUILayout.Label("Attach Node Settings");
+        if (GUILayout.Button("Auto Generate AttachNodes"))
+        {
+            
+            TargetCore.data.attachNodes.Clear();
+            // Attach node naming scheme
+            foreach (var attachmentNode in TargetObject.GetComponentsInChildren<AttachmentNode>())
+            {
+                var obj = attachmentNode.gameObject;
+                var pos = TargetObject.transform.InverseTransformPoint(obj.transform.position);
+                var dir = Quaternion.Euler(TargetObject.transform.InverseTransformDirection(obj.transform.rotation.eulerAngles)) * Vector3.forward;
+                var newDefinition = new AttachNodeDefinition
+                {
+                    nodeID = obj.name,
+                    NodeSymmetryGroupID = attachmentNode.nodeSymmetryGroupID,
+                    nodeType = attachmentNode.nodeType,
+                    attachMethod = attachmentNode.attachMethod,
+                    IsMultiJoint = attachmentNode.isMultiJoint,
+                    MultiJointMaxJoint = attachmentNode.multiJointMaxJoint,
+                    MultiJointRadiusOffset = attachmentNode.multiJointRadiusOffset,
+                    position = pos,
+                    orientation = dir,
+                    size = attachmentNode.size,
+                    visualSize = attachmentNode.visualSize,
+                    angularStrengthMultiplier = attachmentNode.angularStrengthMultiplier,
+                    contactArea = attachmentNode.contactArea,
+                    overrideDragArea = attachmentNode.overrideDragArea,
+                    isCompoundJoint = attachmentNode.isCompoundJoint
+                };
+                TargetCore.data.attachNodes.Add(newDefinition);
+            }
+            EditorUtility.SetDirty(target);
+        }
+        
         GUILayout.Label("Gizmo Settings", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
         _centerOfMassGizmos = EditorGUILayout.Toggle("CoM gizmos", _centerOfMassGizmos);
@@ -116,5 +141,15 @@ public class PartEditor : Editor
             Gizmos.DrawRay(pos, dir * 0.25f);
             Gizmos.DrawSphere(pos,0.05f);
         }
+    }
+
+    [DrawGizmo(GizmoType.Active | GizmoType.Selected)]
+    public static void DrawGizmoForAttachmentNode(AttachmentNode node, GizmoType gizmoType)
+    {
+        if (!_attachNodeGizmos) return;
+        Gizmos.color = new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f);
+        var pos = node.transform.position;
+        Gizmos.DrawRay(pos, node.transform.rotation * Vector3.forward * 0.25f);
+        Gizmos.DrawSphere(pos,0.05f);
     }
 }
