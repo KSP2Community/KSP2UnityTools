@@ -1,15 +1,19 @@
 {
-    "name": "KSP2UT",
+    "name": "Editor",
     "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [],
+    "references": [
+        "GUID:769110a31bb965842ac56939c81f8f42"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Assembly-CSharp.dll",
         "Newtonsoft.Json.dll",
-        "Newtonsoft.Json.UnityConverters.dll"
+        "Newtonsoft.Json.UnityConverters.dll",
+        "Assembly-CSharp.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
