@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
+using Editor.KSP2UnityTools.Editor;
 using KSP;
 using UnityEditor;
 using KSP.IO;
@@ -9,13 +10,13 @@ using KSP2UT.KSP2UnityTools;
 using UnityEngine;
 
 [CustomEditor(typeof(CorePartData))]
-public class PartEditor : Editor
+public class PartEditor : UnityEditor.Editor
 {
 
     private static bool _initialized = false;
     private static readonly Color ComColor = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.5f);
 
-    private static string _jsonPath = "%NAME%.json";
+    // private static string _jsonPath = "%NAME%.json";
 
     private static bool _centerOfMassGizmos = true;
     private static bool _centerOfLiftGizmos = true;
@@ -87,7 +88,14 @@ public class PartEditor : Editor
             EditorUtility.SetDirty(target);
         }
         GUILayout.Label("Part Saving", EditorStyles.boldLabel);
-        _jsonPath = EditorGUILayout.TextField("JSON Path",_jsonPath);
+        string _jsonPath = "%NAME%.json";
+        if (KSP2UnityToolsManager.Settings.gameObjectPaths.ContainsKey(TargetObject.name))
+        {
+            _jsonPath = KSP2UnityToolsManager.Settings.gameObjectPaths[TargetObject.name];
+        }
+        // _jsonPath = EditorGUILayout.TextField("JSON Path",_jsonPath);
+        KSP2UnityToolsManager.Settings.gameObjectPaths[TargetObject.name] =
+            _jsonPath = EditorGUILayout.TextField("JSON Path", _jsonPath);
         if (!GUILayout.Button("Save Part JSON")) return;
         if (!_initialized) Initialize();
         if (TargetCore == null) return;

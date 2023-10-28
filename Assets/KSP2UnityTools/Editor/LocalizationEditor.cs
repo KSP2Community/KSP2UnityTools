@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(LanguageSource))]
-public class LocalizationEditor : Editor
+public class LocalizationEditor : UnityEditor.Editor
 {
     private SerializedProperty _onMissingTranslation;
     private Dictionary<string, bool> termFoldouts = new Dictionary<string, bool>();

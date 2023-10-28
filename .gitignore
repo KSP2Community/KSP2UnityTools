@@ -61,6 +61,13 @@ crashlytics-build.properties
 # IDEA
 .idea/
 
+# Settings
+Assets/KSP2UTSettings.asset
+Assets/KSP2UTSettings.meta
+Assets/Thunderkit*
+Assets/StreamingAssets
+
+
 # Copyrighted Packages
 Packages/KSP2_x64
 Assets/engine_0v_xenon_dawn*

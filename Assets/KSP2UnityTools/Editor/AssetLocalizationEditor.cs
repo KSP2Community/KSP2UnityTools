@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEditor;
 using Cheese.Extensions;
 [CustomEditor(typeof(LanguageSourceAsset))]
-public class AssetLocalizationEditor : Editor
+public class AssetLocalizationEditor : UnityEditor.Editor
 {
     private Dictionary<string, bool> termFoldouts = new Dictionary<string, bool>();
     private Dictionary<string, bool> titleFoldouts = new Dictionary<string, bool>();

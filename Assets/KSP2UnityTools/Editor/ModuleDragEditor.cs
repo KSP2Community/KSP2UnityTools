@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Module_Drag))]
-public class ModuleDragEditor : Editor
+public class ModuleDragEditor : UnityEditor.Editor
 {
     [DrawGizmo(GizmoType.Active | GizmoType.Selected)]
     public static void DrawGizmosForDrag(Module_Drag moduleDrag, GizmoType gizmoType)
