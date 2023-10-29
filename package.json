@@ -1,0 +1,21 @@
+﻿{
+  "name": "ksp2community.ksp2unitytools",
+  "version": "0.3.0",
+  "displayName": "KSP 2 Unity Tools",
+  "description": "A collection of Unity editor scripts and utilities to make developing Kerbal Space Program 2 mods easier.",
+  "unity": "2022.3",
+  "unityRelease": "5f1",
+  "documentationUrl": "https://github.com/KSP2Community/KSP2UnityTools",
+  "licensesUrl": "https://raw.githubusercontent.com/KSP2Community/KSP2UnityTools/main/Packages/ksp2community.ksp2unitytools/LICENSE",
+  "keywords": [
+    "parts",
+    "ksp2",
+    "mods"
+  ],
+  "author": {
+    "name": "cheese3660"
+  },
+  "dependencies": {
+    "com.unity.addressables": "1.21.18"
+  }
+}

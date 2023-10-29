@@ -5,7 +5,6 @@ using UnityEngine.Windows;
 
 namespace Editor.KSP2UnityTools.Editor
 {
-
     public static class KSP2UnityToolsManager
     {
         public static readonly KSP2UnityToolsSettings Settings;

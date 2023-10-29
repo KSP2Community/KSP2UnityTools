@@ -12,7 +12,6 @@ using UnityEngine;
 [CustomEditor(typeof(CorePartData))]
 public class PartEditor : UnityEditor.Editor
 {
-
     private static bool _initialized = false;
     private static readonly Color ComColor = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.5f);
 
@@ -23,7 +22,7 @@ public class PartEditor : UnityEditor.Editor
     private static bool _attachNodeGizmos = true;
 
     public static bool DragCubeGizmos = true;
-    
+
     // Just initialize all the conversion stuff
     private static void Initialize()
     {
@@ -33,9 +32,6 @@ public class PartEditor : UnityEditor.Editor
         Module_Engine mod;
     }
 
-    private void OnSceneGUI()
-    {
-    }
     private GameObject TargetObject => TargetData.gameObject;
     private CorePartData TargetData => target as CorePartData;
     private PartCore TargetCore => TargetData.Core;
@@ -46,7 +42,7 @@ public class PartEditor : UnityEditor.Editor
         GUILayout.Label("Attach Node Settings");
         if (GUILayout.Button("Auto Generate AttachNodes"))
         {
-            
+
             TargetCore.data.attachNodes.Clear();
             // Attach node naming scheme
             foreach (var attachmentNode in TargetObject.GetComponentsInChildren<AttachmentNode>())
@@ -76,7 +72,7 @@ public class PartEditor : UnityEditor.Editor
             }
             EditorUtility.SetDirty(target);
         }
-        
+
         GUILayout.Label("Gizmo Settings", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
         _centerOfMassGizmos = EditorGUILayout.Toggle("CoM gizmos", _centerOfMassGizmos);

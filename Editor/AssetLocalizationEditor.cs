@@ -7,6 +7,7 @@ using UniLinq;
 using UnityEngine;
 using UnityEditor;
 using Cheese.Extensions;
+
 [CustomEditor(typeof(LanguageSourceAsset))]
 public class AssetLocalizationEditor : UnityEditor.Editor
 {
@@ -17,10 +18,8 @@ public class AssetLocalizationEditor : UnityEditor.Editor
     private Dictionary<string, bool> descriptionFoldouts = new Dictionary<string, bool>();
     private SerializedProperty mSource;
 
-    
     private static bool GetOrSetFalseIfNot(IDictionary<string, bool> foldout, string name)
     {
-        
         if (foldout.TryGetValue(name, out var val))
         {
             return val;
@@ -28,6 +27,7 @@ public class AssetLocalizationEditor : UnityEditor.Editor
         foldout[name] = false;
         return false;
     }
+
     void OnEnable()
     {
         mSource = serializedObject.FindProperty("mSource");
@@ -42,7 +42,7 @@ public class AssetLocalizationEditor : UnityEditor.Editor
     {
         DrawHorizontalLine(Color.gray, 1);
     }
-    
+
     private static void DrawHorizontalLine(Color color, int thickness = 2, int padding = 4)
     {
         Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
@@ -52,7 +52,7 @@ public class AssetLocalizationEditor : UnityEditor.Editor
         r.width += 14;
         EditorGUI.DrawRect(r, color);
     }
-    
+
     private static void DrawVerticalLine()
     {
         DrawVerticalLine(Color.gray);
@@ -62,7 +62,7 @@ public class AssetLocalizationEditor : UnityEditor.Editor
     {
         DrawVerticalLine(Color.gray, 1);
     }
-    
+
     private static void DrawVerticalLine(Color color, int thickness = 2, int padding = 4)
     {
         Rect r = EditorGUILayout.GetControlRect(GUILayout.Width(padding + thickness));
@@ -193,7 +193,7 @@ public class AssetLocalizationEditor : UnityEditor.Editor
                 }
             }
         }
-        
+
         removeAtIndices = new List<int>();
 
         var partIndex = 0;
@@ -214,7 +214,7 @@ public class AssetLocalizationEditor : UnityEditor.Editor
 
             partIndex += 1;
         }
-        
+
         for (var i = removeAtIndices.Count - 1; i >= 0; i--)
         {
             partsEditors.RemoveAt(removeAtIndices[i]);

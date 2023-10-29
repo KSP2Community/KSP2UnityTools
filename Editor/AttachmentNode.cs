@@ -23,7 +23,5 @@ namespace KSP2UT.KSP2UnityTools
         public float contactArea;
         public float overrideDragArea;
         public bool isCompoundJoint;
-
-        
     }
 }
