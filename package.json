@@ -15,6 +15,7 @@
   "author": {
     "name": "cheese3660"
   },
+  "hideInEditor": false,
   "dependencies": {
     "com.unity.addressables": "1.21.18"
   }
