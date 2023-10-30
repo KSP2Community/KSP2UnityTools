@@ -1,9 +1,10 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:ScrollView>
-        <ui:DropdownField label="Build Mode" index="0" name="BuildMode" choices="Everything,Copy Addressables Only" />
+        <ui:Label tabindex="-1" text="Mod Building" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; -unity-font-style: bold;" />
+        <ui:DropdownField label="Build Mode" index="0" name="BuildMode" choices="Everything,Copy Assets Only" />
         <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
-            <ui:TextField picking-mode="Ignore" label="Build Path" name="BuildPath" tooltip="Should point to the folder you want to copy addressables into if set to copy addressables only, or the zip file you want to make" style="flex-grow: 1;" />
-            <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseBuildPath" />
+            <ui:TextField picking-mode="Ignore" label="Build Path" name="BuildPath" tooltip="Should point to your mod folder if set to copy assets only, or the zip file you want to make" style="flex-grow: 1;" />
+            <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseBuildPath" style="flex-shrink: 0; flex-grow: 0;" />
         </ui:VisualElement>
         <ui:Foldout text="Mod Info" name="ModInfoFoldout">
             <ui:TextField picking-mode="Ignore" label="Mod ID" value="sampleMod" name="ModID" />
@@ -30,5 +31,15 @@
         <ui:Button text="Generate swinfo.json" display-tooltip-when-elided="true" name="GenerateSwinfo" />
         <ui:Button text="Import swinfo.json" display-tooltip-when-elided="true" name="ImportSwinfo" />
         <ui:Button text="Build Mod" display-tooltip-when-elided="true" name="BuildMod" tooltip="Generates into the aforementioned build path" />
+        <ui:Label tabindex="-1" text="Mod Testing" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; -unity-font-style: bold;" />
     </ui:ScrollView>
+    <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+        <ui:TextField picking-mode="Ignore" label="In Game Mod Folder" name="ModAddressablesFolder" tooltip="This points to the addressables folder of your mod in game" style="flex-grow: 1;" />
+        <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseAddressablesPath" />
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+        <ui:TextField picking-mode="Ignore" label="Game Path" name="GamePath" tooltip="Points to KSP2_x64.exe" style="flex-grow: 1;" />
+        <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseGamePath" />
+    </ui:VisualElement>
+    <ui:Button text="Build And Test" display-tooltip-when-elided="true" name="BuildAndLaunch" />
 </ui:UXML>
