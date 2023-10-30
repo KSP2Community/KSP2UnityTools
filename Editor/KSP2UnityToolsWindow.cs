@@ -169,7 +169,7 @@ namespace Editor.Editor
             _browseGamePath = doc.Q<Button>("BrowseGamePath");
             _browseGamePath.clicked += () =>
             {
-                var path = _modAddressablesPath.value;
+                var path = _gamePath.value;
                 if (path == "")
                 {
                     path = "Assets";
@@ -250,7 +250,7 @@ namespace Editor.Editor
         {
             var path = _buildPath.value;
             if (string.IsNullOrEmpty(path)) path = "Assets";
-            _buildPath.value = BuildEverything ? EditorUtility.SaveFilePanel("Save Location", new FileInfo(path).DirectoryName, $"{_projectModInfo.id}.zip","zip") : EditorUtility.SaveFolderPanel("Save Location", path, "addressables");
+            _buildPath.value = BuildEverything ? EditorUtility.SaveFilePanel("Save Location", new FileInfo(path).DirectoryName, $"{_projectModInfo.id}.zip","zip") : EditorUtility.SaveFolderPanel("Save Location", path, $"{_projectModInfo.id}");
         }
 
         private void AddDependency()
@@ -387,11 +387,13 @@ namespace Editor.Editor
             DirectoryInfo[] dirs = dir.GetDirectories();
 
             // Create the destination directory
-            Directory.CreateDirectory(destinationDir);
+            if (!Directory.Exists(destinationDir))
+                Directory.CreateDirectory(destinationDir);
 
             // Get the files in the source directory and copy to the destination directory
             foreach (FileInfo file in dir.GetFiles())
             {
+                if (file.Extension == "meta") continue;
                 string targetFilePath = Path.Combine(destinationDir, file.Name);
                 file.CopyTo(targetFilePath);
             }
@@ -406,9 +408,22 @@ namespace Editor.Editor
                 }
             }
         }
+
+        private void BuildAssetBundles()
+        {
+            string assetBundleDirectory = "Assets/assets/bundles";
+            if (!Directory.Exists(assetBundleDirectory))
+            {
+                Directory.CreateDirectory(assetBundleDirectory);
+            }
+
+            BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None,
+                BuildTarget.StandaloneWindows);
+        }
         
         private void BuildAddressables()
         {
+            BuildAssetBundles();
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
             bool success = string.IsNullOrEmpty(result.Error);
             if (!success)
@@ -434,17 +449,29 @@ namespace Editor.Editor
                     $"KSP2UnityToolsTempBuild/Bepinex/Plugins/{_projectModInfo.id}/swinfo.json");
                 if (Directory.Exists("Assets/localizations"))
                 {
-                    foreach (var file in Directory.EnumerateFiles("Assets/localizations"))
-                    {
-                        if (file.EndsWith(".csv") || file.EndsWith(".i2csv"))
-                        {
-                            FileInfo f = new FileInfo(file);
-                            File.Copy(file,$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/localizations/{f.Name}");
-                        }
-                    }
+                    CopyDirectory("Assets/localizations",$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/localizations",true);
+                }
+
+                if (Directory.Exists("Assets/assets"))
+                {
+                    CopyDirectory("Assets/assets",
+                        $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/assets", true);
+                }
+
+                if (Directory.Exists("Assets/patches"))
+                {
+                    CopyDirectory("Assets/patches",
+                        $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/patches", true);
+                }
+
+                if (Directory.Exists("Assets/libraries"))
+                {
+                    CopyDirectory("Assets/libraries",
+                        $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/libraries", true);
                 }
                 CopyDirectory("Library/com.unity.addressables/aa/Windows",
                     $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/addressables", true);
+                
                 if (File.Exists(_buildPath.text)) File.Delete(_buildPath.text);
                 ZipFile.CreateFromDirectory("KSP2UnityToolsTempBuild", _buildPath.text);
             }
@@ -455,11 +482,12 @@ namespace Editor.Editor
                     Directory.Delete(_buildPath.text,true);
                 }
                 CopyDirectory("Library/com.unity.addressables/aa/Windows",
-                    _buildPath.text, true);
+                    $"{_buildPath.text}/addressables", true);
             }
         }
         private void BuildAndTest()
         {
+            BuildAssetBundles();
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
             bool success = string.IsNullOrEmpty(result.Error);
             if (!success)
@@ -468,7 +496,39 @@ namespace Editor.Editor
                 return;
             }
 
+            var modPath = _modAddressablesPath.value;
+            if (Directory.Exists($"{modPath}/addressables"))
+            {
+                Directory.Delete(_buildPath.text,true);
+            }
             CopyDirectory("Library/com.unity.addressables/aa/Windows", _modAddressablesPath.text, true);
+            if (Directory.Exists("Assets/localizations"))
+            {
+                CopyDirectory("Assets/localizations",$"{modPath}/{_projectModInfo.id}/localizations",true);
+            }
+
+            if (Directory.Exists("Assets/assets"))
+            {
+                CopyDirectory("Assets/assets",
+                    $"{modPath}/{_projectModInfo.id}/assets", true);
+            }
+
+            if (Directory.Exists("Assets/patches"))
+            {
+                CopyDirectory("Assets/patches",
+                    $"{modPath}/{_projectModInfo.id}/patches", true);
+            }
+
+            if (Directory.Exists("Assets/libraries"))
+            {
+                CopyDirectory("Assets/libraries",
+                    $"{modPath}/{_projectModInfo.id}/libraries", true);
+            }
+
+            if (BuildEverything)
+            {
+                _projectModInfo.GenerateSwinfo($"{modPath}/swinfo.json");
+            }
             Process.Start(_gamePath.text);
         }
     }

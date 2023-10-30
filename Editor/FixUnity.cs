@@ -4,20 +4,20 @@ using UnityEngine;
 
 namespace Editor.KSP2UnityTools.Editor
 {
-    [InitializeOnLoad]
+    // [InitializeOnLoad]
     public static class FixUnity
     {
-        static FixUnity()
-        {
-            if (!SessionState.GetBool("FixedUnity", false))
-            {
-                Debug.Log("First init.");
-
-                SessionState.SetBool("FixedUnity", true);
-                
-                CreateDeleteScript();
-            }
-        }
+        // static FixUnity()
+        // {
+        //     if (!SessionState.GetBool("FixedUnity", false))
+        //     {
+        //         Debug.Log("First init.");
+        //
+        //         SessionState.SetBool("FixedUnity", true);
+        //         
+        //         CreateDeleteScript();
+        //     }
+        // }
         
         private static string _emptyMonobehaviour = @"
 using System.Collections;
