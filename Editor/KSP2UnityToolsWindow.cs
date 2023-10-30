@@ -143,6 +143,7 @@ namespace Editor.Editor
             _buildMod.clicked += BuildAddressables;
 
             _modAddressablesPath = doc.Q<TextField>("ModAddressablesFolder");
+            _modAddressablesPath.value = KSP2UnityToolsManager.Settings.savedModAddressablesPath;
             _modAddressablesPath.RegisterValueChangedCallback(evt =>
             {
                 KSP2UnityToolsManager.Settings.savedModAddressablesPath = evt.newValue;
@@ -161,6 +162,7 @@ namespace Editor.Editor
                     EditorUtility.SaveFolderPanel("Mod Addressables Folder", "path", "addressables");
             };
             _gamePath = doc.Q<TextField>("GamePath");
+            _gamePath.value = KSP2UnityToolsManager.Settings.savedKsp2Path;
             _gamePath.RegisterValueChangedCallback(evt =>
             {
                 KSP2UnityToolsManager.Settings.savedKsp2Path = evt.newValue;
@@ -499,7 +501,7 @@ namespace Editor.Editor
             var modPath = _modAddressablesPath.value;
             if (Directory.Exists($"{modPath}/addressables"))
             {
-                Directory.Delete(_buildPath.text,true);
+                Directory.Delete($"{modPath}/addressables",true);
             }
             CopyDirectory("Library/com.unity.addressables/aa/Windows", _modAddressablesPath.text, true);
             if (Directory.Exists("Assets/localizations"))
