@@ -503,28 +503,28 @@ namespace Editor.Editor
             {
                 Directory.Delete($"{modPath}/addressables",true);
             }
-            CopyDirectory("Library/com.unity.addressables/aa/Windows", _modAddressablesPath.text, true);
+            CopyDirectory("Library/com.unity.addressables/aa/Windows", $"{modPath}/addressables", true);
             if (Directory.Exists("Assets/localizations"))
             {
-                CopyDirectory("Assets/localizations",$"{modPath}/{_projectModInfo.id}/localizations",true);
+                CopyDirectory("Assets/localizations",$"{modPath}/localizations",true);
             }
 
             if (Directory.Exists("Assets/assets"))
             {
                 CopyDirectory("Assets/assets",
-                    $"{modPath}/{_projectModInfo.id}/assets", true);
+                    $"{modPath}/assets", true);
             }
 
             if (Directory.Exists("Assets/patches"))
             {
                 CopyDirectory("Assets/patches",
-                    $"{modPath}/{_projectModInfo.id}/patches", true);
+                    $"{modPath}/patches", true);
             }
 
             if (Directory.Exists("Assets/libraries"))
             {
                 CopyDirectory("Assets/libraries",
-                    $"{modPath}/{_projectModInfo.id}/libraries", true);
+                    $"{modPath}/libraries", true);
             }
 
             if (BuildEverything)
