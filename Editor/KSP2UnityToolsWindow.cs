@@ -394,7 +394,7 @@ namespace Editor.Editor
                         if (file.EndsWith(".csv") || file.EndsWith(".i2csv"))
                         {
                             FileInfo f = new FileInfo(file);
-                            File.Copy(file,$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/{f.Name}");
+                            File.Copy(file,$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/localizations{f.Name}");
                         }
                     }
                 }
@@ -407,7 +407,7 @@ namespace Editor.Editor
             {
                 if (Directory.Exists(_buildPath.text))
                 {
-                    Directory.Delete(_buildPath.text);
+                    Directory.Delete(_buildPath.text,true);
                 }
                 CopyDirectory("Library/com.unity.addressables/aa/Windows",
                     _buildPath.text, true);
