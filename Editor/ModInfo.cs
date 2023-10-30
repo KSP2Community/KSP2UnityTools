@@ -68,7 +68,8 @@ namespace Editor.Editor
                 };
                 var depObj = new JObject
                 {
-                    ["id"] = dep.Id
+                    ["id"] = dep.Id,
+                        ["version"] = versionObj
                 };
                 deps.Add(depObj);
             }
@@ -83,7 +84,8 @@ namespace Editor.Editor
                 };
                 var conflictObj = new JObject
                 {
-                    ["id"] = conflict.Id
+                    ["id"] = conflict.Id,
+                    ["version"] = versionObj
                 };
                 conflicts.Add(conflictObj);
             }
