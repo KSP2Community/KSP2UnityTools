@@ -394,7 +394,7 @@ namespace Editor.Editor
                         if (file.EndsWith(".csv") || file.EndsWith(".i2csv"))
                         {
                             FileInfo f = new FileInfo(file);
-                            File.Copy(file,$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/localizations{f.Name}");
+                            File.Copy(file,$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/localizations/{f.Name}");
                         }
                     }
                 }
