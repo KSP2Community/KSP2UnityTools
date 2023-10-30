@@ -9,6 +9,8 @@ namespace KSP2UT.KSP2UnityTools
         public List<string> gameObjectValues = new();
         public string savedBuildPath = "";
         public string savedBuildMode = "Everything";
+        public string savedModAddressablesPath = "";
+        public string savedKsp2Path = "";
 
         public bool Contains(string key)
         {

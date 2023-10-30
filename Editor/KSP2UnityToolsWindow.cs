@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
@@ -60,6 +61,11 @@ namespace Editor.Editor
         private Button _importSwinfo;
         private Button _buildMod;
         
+        private TextField _modAddressablesPath;
+        private Button _browseModAddressablesPath;
+        private TextField _gamePath;
+        private Button _browseGamePath;
+        private Button _buildAndTest;
         
         private void CreateGUI()
         {
@@ -135,6 +141,45 @@ namespace Editor.Editor
             _importSwinfo.clicked += ImportSwinfo;
             _buildMod = doc.Q<Button>("BuildMod");
             _buildMod.clicked += BuildAddressables;
+
+            _modAddressablesPath = doc.Q<TextField>("ModAddressablesFolder");
+            _modAddressablesPath.RegisterValueChangedCallback(evt =>
+            {
+                KSP2UnityToolsManager.Settings.savedModAddressablesPath = evt.newValue;
+                EditorUtility.SetDirty(KSP2UnityToolsManager.Settings);
+            });
+            _browseModAddressablesPath = doc.Q<Button>("BrowseAddressablesPath");
+            _browseModAddressablesPath.clicked += () =>
+            {
+                var path = _modAddressablesPath.value;
+                if (path == "")
+                {
+                    path = "Assets";
+                }
+
+                _modAddressablesPath.value =
+                    EditorUtility.SaveFolderPanel("Mod Addressables Folder", "path", "addressables");
+            };
+            _gamePath = doc.Q<TextField>("GamePath");
+            _gamePath.RegisterValueChangedCallback(evt =>
+            {
+                KSP2UnityToolsManager.Settings.savedKsp2Path = evt.newValue;
+                EditorUtility.SetDirty(KSP2UnityToolsManager.Settings);
+            });
+            _browseGamePath = doc.Q<Button>("BrowseGamePath");
+            _browseGamePath.clicked += () =>
+            {
+                var path = _modAddressablesPath.value;
+                if (path == "")
+                {
+                    path = "Assets";
+                }
+
+                _gamePath.value =
+                    EditorUtility.OpenFilePanel("KSP2_x64.exe location", new FileInfo(path).DirectoryName, "exe");
+            };
+            _buildAndTest = doc.Q<Button>("BuildAndLaunch");
+            _buildAndTest.clicked += BuildAndTest;
             UpdateModInfoDisplay();
         }
 
@@ -205,7 +250,7 @@ namespace Editor.Editor
         {
             var path = _buildPath.value;
             if (string.IsNullOrEmpty(path)) path = "Assets";
-            _buildPath.value = BuildEverything ? EditorUtility.SaveFilePanel("Save Location", new FileInfo(path).DirectoryName, $"{_projectModInfo.id}.zip","zip") : EditorUtility.SaveFolderPanel("Save Location", path, "");
+            _buildPath.value = BuildEverything ? EditorUtility.SaveFilePanel("Save Location", new FileInfo(path).DirectoryName, $"{_projectModInfo.id}.zip","zip") : EditorUtility.SaveFolderPanel("Save Location", path, "addressables");
         }
 
         private void AddDependency()
@@ -413,5 +458,19 @@ namespace Editor.Editor
                     _buildPath.text, true);
             }
         }
+        private void BuildAndTest()
+        {
+            AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
+            bool success = string.IsNullOrEmpty(result.Error);
+            if (!success)
+            {
+                EditorUtility.DisplayDialog("Build Error", result.Error, "Acknowledge");
+                return;
+            }
+
+            CopyDirectory("Library/com.unity.addressables/aa/Windows", _modAddressablesPath.text, true);
+            Process.Start(_gamePath.text);
+        }
     }
+    
 }

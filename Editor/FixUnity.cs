@@ -1,10 +1,24 @@
 using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace Editor.KSP2UnityTools.Editor
 {
+    [InitializeOnLoad]
     public static class FixUnity
     {
+        static FixUnity()
+        {
+            if (!SessionState.GetBool("FixedUnity", false))
+            {
+                Debug.Log("First init.");
+
+                SessionState.SetBool("FixedUnity", true);
+                
+                CreateDeleteScript();
+            }
+        }
+        
         private static string _emptyMonobehaviour = @"
 using System.Collections;
 using System.Collections.Generic;
