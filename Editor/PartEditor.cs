@@ -139,13 +139,13 @@ public class PartEditor : UnityEditor.Editor
         {
             var centerOfMassPosition = data.Data.coMassOffset;
             centerOfMassPosition = localToWorldMatrix.MultiplyPoint(centerOfMassPosition);
-            Gizmos.DrawIcon(centerOfMassPosition, "com_icon.png", false);
+            Gizmos.DrawIcon(centerOfMassPosition, "Packages/ksp2community.ksp2unitytools/Assets/Gizmos/com_icon.png", false);
         }
         if (_centerOfLiftGizmos)
         {
             var centerOfLiftPosition = data.Data.coLiftOffset;
             centerOfLiftPosition = localToWorldMatrix.MultiplyPoint(centerOfLiftPosition);
-            Gizmos.DrawIcon(centerOfLiftPosition, "col_icon.png", false);
+            Gizmos.DrawIcon(centerOfLiftPosition, "Packages/ksp2community.ksp2unitytools/Assets/Gizmos/col_icon.png", false);
         }
         if (!_attachNodeGizmos) return;
         Gizmos.color = new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f);
