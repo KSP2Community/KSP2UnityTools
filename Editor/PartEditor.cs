@@ -7,6 +7,8 @@ using KSP.IO;
 using KSP.Modules;
 using KSP.Sim.Definitions;
 using KSP2UT.KSP2UnityTools;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
 [CustomEditor(typeof(CorePartData))]
@@ -85,13 +87,15 @@ public class PartEditor : UnityEditor.Editor
         }
         GUILayout.Label("Part Saving", EditorStyles.boldLabel);
         string _jsonPath = "%NAME%.json";
-        if (KSP2UnityToolsManager.Settings.gameObjectPaths.ContainsKey(TargetObject.name))
+        if (KSP2UnityToolsManager.Settings.Contains(TargetObject.name))
         {
-            _jsonPath = KSP2UnityToolsManager.Settings.gameObjectPaths[TargetObject.name];
+            _jsonPath = KSP2UnityToolsManager.Settings.Get(TargetObject.name);
         }
         // _jsonPath = EditorGUILayout.TextField("JSON Path",_jsonPath);
-        KSP2UnityToolsManager.Settings.gameObjectPaths[TargetObject.name] =
-            _jsonPath = EditorGUILayout.TextField("JSON Path", _jsonPath);
+        EditorGUI.BeginChangeCheck();
+        KSP2UnityToolsManager.Settings.Set(TargetObject.name, _jsonPath = EditorGUILayout.TextField("JSON Path", _jsonPath));
+        if (EditorGUI.EndChangeCheck())
+            EditorUtility.SetDirty(KSP2UnityToolsManager.Settings);
         if (!GUILayout.Button("Save Part JSON")) return;
         if (!_initialized) Initialize();
         if (TargetCore == null) return;
@@ -111,10 +115,19 @@ public class PartEditor : UnityEditor.Editor
             TargetCore.data.serializedPartModules.Add(new SerializedPartModule(partBehaviourModule,false));
         }
         var json = IOProvider.ToJson(TargetCore);
-        var path = $"{Application.dataPath}/{_jsonPath}";
+        var path = $"Assets/{_jsonPath}";
         path = path.Replace("%NAME%", TargetCore.data.partName);
         File.WriteAllText($"{path}", json);
+        AssetDatabase.ImportAsset(path);
         AssetDatabase.Refresh();
+        var settings = AddressableAssetSettingsDefaultObject.Settings;
+        var group = settings.FindGroup(KSP2UnityToolsManager.ProjectModInfo.SanitizedId);
+        var guid = AssetDatabase.AssetPathToGUID(path);
+        var entry = settings.CreateOrMoveEntry(guid, group);
+        entry.labels.Add("parts_data");
+        entry.address = $"{TargetCore.data.partName}.json";
+        settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, entry, true);
+        AssetDatabase.SaveAssets();
         EditorUtility.DisplayDialog("Part Exported", $"Json is at: {path}", "ok");
     }
 
@@ -126,13 +139,13 @@ public class PartEditor : UnityEditor.Editor
         {
             var centerOfMassPosition = data.Data.coMassOffset;
             centerOfMassPosition = localToWorldMatrix.MultiplyPoint(centerOfMassPosition);
-            Gizmos.DrawIcon(centerOfMassPosition, "com_icon.png", false);
+            Gizmos.DrawIcon(centerOfMassPosition, "Packages/ksp2community.ksp2unitytools/Assets/Gizmos/com_icon.png", false);
         }
         if (_centerOfLiftGizmos)
         {
             var centerOfLiftPosition = data.Data.coLiftOffset;
             centerOfLiftPosition = localToWorldMatrix.MultiplyPoint(centerOfLiftPosition);
-            Gizmos.DrawIcon(centerOfLiftPosition, "col_icon.png", false);
+            Gizmos.DrawIcon(centerOfLiftPosition, "Packages/ksp2community.ksp2unitytools/Assets/Gizmos/col_icon.png", false);
         }
         if (!_attachNodeGizmos) return;
         Gizmos.color = new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f);

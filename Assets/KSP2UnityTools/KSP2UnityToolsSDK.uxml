@@ -1,0 +1,34 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:ScrollView>
+        <ui:DropdownField label="Build Mode" index="0" name="BuildMode" choices="Everything,Copy Addressables Only" />
+        <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+            <ui:TextField picking-mode="Ignore" label="Build Path" name="BuildPath" tooltip="Should point to the folder you want to copy addressables into if set to copy addressables only, or the zip file you want to make" style="flex-grow: 1;" />
+            <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseBuildPath" />
+        </ui:VisualElement>
+        <ui:Foldout text="Mod Info" name="ModInfoFoldout">
+            <ui:TextField picking-mode="Ignore" label="Mod ID" value="sampleMod" name="ModID" />
+            <ui:TextField picking-mode="Ignore" label="Name" value="Sample Mod" name="ModName" />
+            <ui:TextField picking-mode="Ignore" label="Author" value="nobody" name="ModAuthor" />
+            <ui:TextField picking-mode="Ignore" label="Description" value="A sample mod for KSP2" name="ModDescription" multiline="true" max-length="-1" />
+            <ui:TextField picking-mode="Ignore" label="Source" name="ModSource" />
+            <ui:TextField picking-mode="Ignore" label="Version" value="0.1.0" name="Version" readonly="false" />
+            <ui:TextField picking-mode="Ignore" label="Version Check" name="VersionCheck" tooltip="Points to remote swinfo.json file" />
+            <ui:Foldout text="KSP2 Version" name="KSP2Version">
+                <ui:TextField picking-mode="Ignore" label="Minimum" value="*" name="MinimumKSP2Version" />
+                <ui:TextField picking-mode="Ignore" label="Maximum" value="*" name="MaximumKSP2Version" />
+            </ui:Foldout>
+            <ui:Foldout text="Dependencies" name="Dependencies">
+                <ui:VisualElement name="DependencyContainer" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
+                <ui:Button text="Add" display-tooltip-when-elided="true" name="AddDependency" />
+            </ui:Foldout>
+            <ui:Foldout text="Conflicts" name="Conflicts">
+                <ui:VisualElement name="ConflictContainer" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
+                <ui:Button text="Add" display-tooltip-when-elided="true" name="AddConflict" />
+            </ui:Foldout>
+        </ui:Foldout>
+        <ui:Button text="Set Up Addressables From Mod Info" display-tooltip-when-elided="true" name="AddressablesSetup" />
+        <ui:Button text="Generate swinfo.json" display-tooltip-when-elided="true" name="GenerateSwinfo" />
+        <ui:Button text="Import swinfo.json" display-tooltip-when-elided="true" name="ImportSwinfo" />
+        <ui:Button text="Build Mod" display-tooltip-when-elided="true" name="BuildMod" tooltip="Generates into the aforementioned build path" />
+    </ui:ScrollView>
+</ui:UXML>

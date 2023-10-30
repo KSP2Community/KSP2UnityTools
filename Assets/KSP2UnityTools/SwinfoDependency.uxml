@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:TextField picking-mode="Ignore" label="ID" name="DependencyID" />
+    <ui:TextField picking-mode="Ignore" label="Minimum" value="*" name="DependencyMin" />
+    <ui:TextField picking-mode="Ignore" label="Maximum" value="*" name="DependencyMax" />
+    <ui:Button text="Remove" display-tooltip-when-elided="true" name="Remove" />
+    <ui:VisualElement style="flex-grow: 0; background-color: rgb(32, 32, 32); height: 3px; width: auto;" />
+</ui:UXML>
