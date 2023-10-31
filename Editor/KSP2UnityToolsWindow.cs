@@ -320,6 +320,8 @@ namespace Editor.Editor
             var data = JObject.Parse(File.ReadAllText(file));
             if (data.ContainsKey("mod_id")) _projectModInfo.id = data["mod_id"]!.Value<string>();
             if (data.ContainsKey("name")) _projectModInfo.name = data["name"]!.Value<string>();
+            if (data.ContainsKey("version")) _projectModInfo.version = data["version"]!.Value<string>();
+            
             if (data.ContainsKey("author")) _projectModInfo.author = data["author"]!.Value<string>();
             if (data.ContainsKey("description")) _projectModInfo.description = data["description"]!.Value<string>();
             if (data.ContainsKey("source")) _projectModInfo.source = data["source"]!.Value<string>();
@@ -413,7 +415,7 @@ namespace Editor.Editor
 
         private void BuildAssetBundles()
         {
-            string assetBundleDirectory = "Assets/assets/bundles";
+            string assetBundleDirectory = "Assets/plugin_template/assets/bundles";
             if (!Directory.Exists(assetBundleDirectory))
             {
                 Directory.CreateDirectory(assetBundleDirectory);
@@ -449,27 +451,9 @@ namespace Editor.Editor
                 Directory.CreateDirectory($"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/addressables");
                 _projectModInfo.GenerateSwinfo(
                     $"KSP2UnityToolsTempBuild/Bepinex/Plugins/{_projectModInfo.id}/swinfo.json");
-                if (Directory.Exists("Assets/localizations"))
+                if (Directory.Exists("Assets/plugin_template"))
                 {
-                    CopyDirectory("Assets/localizations",$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/localizations",true);
-                }
-
-                if (Directory.Exists("Assets/assets"))
-                {
-                    CopyDirectory("Assets/assets",
-                        $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/assets", true);
-                }
-
-                if (Directory.Exists("Assets/patches"))
-                {
-                    CopyDirectory("Assets/patches",
-                        $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/patches", true);
-                }
-
-                if (Directory.Exists("Assets/libraries"))
-                {
-                    CopyDirectory("Assets/libraries",
-                        $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/libraries", true);
+                    CopyDirectory("Assets/plugin_template",$"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}",true);
                 }
                 CopyDirectory("Library/com.unity.addressables/aa/Windows",
                     $"KSP2UnityToolsTempBuild/BepInEx/Plugins/{_projectModInfo.id}/addressables", true);
@@ -479,12 +463,16 @@ namespace Editor.Editor
             }
             else
             {
-                if (Directory.Exists(_buildPath.text))
+                if (Directory.Exists($"{_buildPath.text}/addressables"))
                 {
-                    Directory.Delete(_buildPath.text,true);
+                    Directory.Delete($"{_buildPath.text}/addressables",true);
                 }
                 CopyDirectory("Library/com.unity.addressables/aa/Windows",
                     $"{_buildPath.text}/addressables", true);
+                if (Directory.Exists("Assets/plugin_template"))
+                {
+                    CopyDirectory("Assets/plugin_template",$"{_buildPath.text}",true);
+                }
             }
         }
         private void BuildAndTest()
@@ -504,27 +492,9 @@ namespace Editor.Editor
                 Directory.Delete($"{modPath}/addressables",true);
             }
             CopyDirectory("Library/com.unity.addressables/aa/Windows", $"{modPath}/addressables", true);
-            if (Directory.Exists("Assets/localizations"))
+            if (Directory.Exists("Assets/plugin_template"))
             {
-                CopyDirectory("Assets/localizations",$"{modPath}/localizations",true);
-            }
-
-            if (Directory.Exists("Assets/assets"))
-            {
-                CopyDirectory("Assets/assets",
-                    $"{modPath}/assets", true);
-            }
-
-            if (Directory.Exists("Assets/patches"))
-            {
-                CopyDirectory("Assets/patches",
-                    $"{modPath}/patches", true);
-            }
-
-            if (Directory.Exists("Assets/libraries"))
-            {
-                CopyDirectory("Assets/libraries",
-                    $"{modPath}/libraries", true);
+                CopyDirectory("Assets/plugin_template",$"{modPath}",true);
             }
 
             if (BuildEverything)

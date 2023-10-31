@@ -1,5 +1,5 @@
 {
-    "name": "Editor",
+    "name": "ksp2community.ksp2unitytools.editor",
     "rootNamespace": "",
     "references": [
         "GUID:769110a31bb965842ac56939c81f8f42",
