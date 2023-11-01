@@ -1,6 +1,6 @@
 ﻿using UnityEngine.UIElements;
 
-namespace Cheese.Extensions
+namespace ksp2community.ksp2unitytools.editor.Editor.Extensions
 {
     public static class VisualElementExtensions
     {

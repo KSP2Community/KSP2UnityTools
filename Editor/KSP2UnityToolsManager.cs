@@ -1,10 +1,9 @@
-using Editor.Editor;
-using KSP2UT.KSP2UnityTools;
+using ksp2community.ksp2unitytools.editor.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Windows;
 
-namespace Editor.KSP2UnityTools.Editor
+namespace ksp2community.ksp2unitytools.editor
 {
     public static class KSP2UnityToolsManager
     {

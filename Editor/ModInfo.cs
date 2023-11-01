@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -7,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Editor
+namespace ksp2community.ksp2unitytools.editor
 {
     /// <summary>
     /// This is used for auto generating releases of packages if you wish, it will also have a uitk based editor for 

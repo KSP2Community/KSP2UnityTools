@@ -1,10 +1,8 @@
-﻿using System;
-using KSP.Sim;
+﻿using KSP.Sim;
 using KSP.Sim.Definitions;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace KSP2UT.KSP2UnityTools
+namespace ksp2community.ksp2unitytools.editor
 {
     public class AttachmentNode : MonoBehaviour
     {

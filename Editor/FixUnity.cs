@@ -1,8 +1,7 @@
 using System.IO;
 using UnityEditor;
-using UnityEngine;
 
-namespace Editor.KSP2UnityTools.Editor
+namespace ksp2community.ksp2unitytools.editor
 {
     // [InitializeOnLoad]
     public static class FixUnity

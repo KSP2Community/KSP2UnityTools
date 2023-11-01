@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine.UIElements;
 
-namespace Editor.Editor
+namespace ksp2community.ksp2unitytools.editor
 {
     public class DependencyController
     {
