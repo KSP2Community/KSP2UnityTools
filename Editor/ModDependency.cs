@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Editor.Editor
+namespace ksp2community.ksp2unitytools.editor
 {
     [Serializable]
     public class ModDependency

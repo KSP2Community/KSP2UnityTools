@@ -1,8 +1,10 @@
-﻿
-using System.Reflection;
+﻿using System.Reflection;
 using KSP.Modules;
+using ksp2community.ksp2unitytools.editor.Editor;
 using UnityEditor;
 using UnityEngine;
+
+namespace ksp2community.ksp2unitytools.editor;
 
 [CustomEditor(typeof(Module_Drag))]
 public class ModuleDragEditor : UnityEditor.Editor

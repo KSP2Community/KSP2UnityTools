@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KSP2UT.KSP2UnityTools
+namespace ksp2community.ksp2unitytools.editor
 {
     public class KSP2UnityToolsSettings : ScriptableObject
     {

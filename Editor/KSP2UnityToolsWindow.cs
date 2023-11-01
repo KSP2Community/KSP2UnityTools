@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Text.RegularExpressions;
-using Cheese.Extensions;
-using Editor.KSP2UnityTools.Editor;
-using Newtonsoft.Json;
+using ksp2community.ksp2unitytools.editor.Editor;
+using ksp2community.ksp2unitytools.editor.Editor.Extensions;
 using Newtonsoft.Json.Linq;
 using UniLinq;
 using UnityEditor;
@@ -16,7 +13,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Editor.Editor
+namespace ksp2community.ksp2unitytools.editor
 {
     public class KSP2UnityToolsWindow : EditorWindow
     {

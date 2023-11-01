@@ -23,7 +23,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Cheese.Extensions
+namespace ksp2community.ksp2unitytools.editor.Editor.Extensions
 {
 // Provide simple value get/set methods for SerializedProperty.  Can be used with
 // any data types and with arbitrarily deeply-pathed properties.
