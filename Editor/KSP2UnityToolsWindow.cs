@@ -394,7 +394,7 @@ namespace ksp2community.ksp2unitytools.editor
             // Get the files in the source directory and copy to the destination directory
             foreach (FileInfo file in dir.GetFiles())
             {
-                if (file.Extension == "meta") continue;
+                if (file.Extension == ".meta") continue;
                 string targetFilePath = Path.Combine(destinationDir, file.Name);
                 file.CopyTo(targetFilePath);
             }
