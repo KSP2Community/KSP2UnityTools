@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ksp2community.ksp2unitytools.editor
 {
@@ -7,6 +8,7 @@ namespace ksp2community.ksp2unitytools.editor
     {
         public List<string> gameObjectKeys = new();
         public List<string> gameObjectValues = new();
+        public List<string> ignoredFiles = new();
         public string savedBuildPath = "";
         public string savedBuildMode = "Everything";
         public string savedModAddressablesPath = "";
@@ -33,6 +35,20 @@ namespace ksp2community.ksp2unitytools.editor
                 gameObjectKeys.Add(key);
                 gameObjectValues.Add(value);
             }
+        }
+
+        public void AddIgnoredFile(string file)
+        {
+            if (!ignoredFiles.Contains(file))
+            {
+                ignoredFiles.Add(file);
+            }
+        }
+
+        public void RemoveIgnoredFile(string file)
+        {
+            if (ignoredFiles.Contains(file))
+                ignoredFiles.Remove(file);
         }
     }
 }
