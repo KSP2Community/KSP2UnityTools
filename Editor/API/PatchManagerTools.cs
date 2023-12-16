@@ -403,12 +403,12 @@ namespace ksp2community.ksp2unitytools.editor.API
             }
         }
 
-        
+
 
         public static void AddDataToModule(StringBuilder sb, object data, int indentation, bool useSemicolons = false)
         {
             var objType = data.GetType();
-            
+
             if (data is ModuleData || ModuleDataSubtypes.Contains(objType))
             {
                 int internalIndentation = indentation;
@@ -418,6 +418,18 @@ namespace ksp2community.ksp2unitytools.editor.API
                     sb.Append("{\n");
                 }
 
+                if (data is Data_Engine dataEngine)
+                {
+                    foreach (var engineMode in dataEngine.engineModes)
+                    {
+                        sb.Indent(internalIndentation);
+                        sb.Append($"+{engineMode.engineID} {{\n");
+                        AddDataToModule(sb, engineMode, internalIndentation+1, true);
+                        sb.Indent(internalIndentation);
+                        sb.Append("}\n\n");
+                    }
+                }
+                
                 foreach (var field in objType.GetFields(BindingFlags.Instance | BindingFlags.Public |
                                                         BindingFlags.NonPublic))
                 {
@@ -436,6 +448,7 @@ namespace ksp2community.ksp2unitytools.editor.API
                         {
                             sb.Append('-');
                         }
+
                         sb.Append("-+\n");
                         foreach (var line in lines)
                         {
@@ -445,19 +458,21 @@ namespace ksp2community.ksp2unitytools.editor.API
                             sb.Append(" |");
                             sb.Append('\n');
                         }
+
                         sb.Indent(internalIndentation);
                         sb.Append("  +-");
                         for (var i = 0; i < maxLength; i++)
                         {
                             sb.Append('-');
                         }
+
                         sb.Append("-+\n");
 
                         sb.Indent(internalIndentation);
                         sb.Append("*/\n");
                         sb.Append("\n");
                     }
-                    
+                    if (field.Name is "engineModes" or "engineID") continue;
                     if (attrs.OfType<JsonIgnoreAttribute>().FirstOrDefault() is not null) continue;
                     if (attrs.OfType<KSPStateAttribute>().FirstOrDefault() is not null) continue;
                     if (attrs.OfType<KSPDefinitionAttribute>().FirstOrDefault() is null) continue;
@@ -524,7 +539,7 @@ namespace ksp2community.ksp2unitytools.editor.API
                     var first = true;
                     foreach (var obj in array)
                     {
-                        
+
                         if (first)
                         {
                             sb.Append("\n");
@@ -547,7 +562,7 @@ namespace ksp2community.ksp2unitytools.editor.API
                 else
                 {
                     var obj = JToken.Parse(IOProvider.ToJson(data));
-                    JsonToDataValue(sb,obj,indentation,useSemicolons);
+                    JsonToDataValue(sb, obj, indentation, useSemicolons);
                 }
             }
             else if (objType.IsGenericType && (objType.GetGenericTypeDefinition() == typeof(List<>)))
@@ -566,7 +581,7 @@ namespace ksp2community.ksp2unitytools.editor.API
                     var first = true;
                     foreach (var obj in list)
                     {
-                        
+
                         if (first)
                         {
                             sb.Append("\n");
@@ -589,16 +604,16 @@ namespace ksp2community.ksp2unitytools.editor.API
                 else
                 {
                     var obj = JToken.Parse(IOProvider.ToJson(data));
-                    JsonToDataValue(sb,obj,indentation,useSemicolons);
+                    JsonToDataValue(sb, obj, indentation, useSemicolons);
                 }
             }
             else
             {
                 var obj = JToken.Parse(IOProvider.ToJson(data));
-                JsonToDataValue(sb,obj,indentation,useSemicolons);
+                JsonToDataValue(sb, obj, indentation, useSemicolons);
             }
         }
-        
+
         public static void AddModuleToPatch(StringBuilder sb, SerializedPartModule partModule, int indentation)
         {
             sb.Indent(indentation);
