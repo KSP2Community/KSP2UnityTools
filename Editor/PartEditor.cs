@@ -5,6 +5,8 @@ using KSP.IO;
 using KSP.Modules;
 using KSP.Sim.Definitions;
 using ksp2community.ksp2unitytools.editor.API;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -23,6 +25,7 @@ namespace ksp2community.ksp2unitytools.editor
         private static bool _centerOfMassGizmos = true;
         private static bool _centerOfLiftGizmos = true;
         private static bool _attachNodeGizmos = true;
+        
 
         public static bool DragCubeGizmos = true;
 
@@ -33,6 +36,20 @@ namespace ksp2community.ksp2unitytools.editor
                 ?.Invoke(null, new object[] { });
             _initialized = true;
         }
+
+
+        private static PersistentDictionary _patchPaths;
+        private static PersistentDictionary PatchPaths => _patchPaths ??= KSP2UnityToolsManager.GetDictionary("PatchPaths");
+
+        private static PersistentDictionary _jsonPaths;
+        private static PersistentDictionary JsonPaths => _jsonPaths ??= KSP2UnityToolsManager.GetDictionary("JsonPaths");
+
+        private static PersistentDictionary _prefabAddressOverrides;
+        private static PersistentDictionary PrefabAddressOverrides => _prefabAddressOverrides ??= KSP2UnityToolsManager.GetDictionary("PrefabAddressOverrides");
+
+        private static PersistentDictionary _iconAddressOverrides;
+        private static PersistentDictionary IconAddressOverrides => _iconAddressOverrides ??= KSP2UnityToolsManager.GetDictionary("IconAddressOverrides");
+        
 
         private GameObject TargetObject => TargetData.gameObject;
         private CorePartData TargetData => target as CorePartData;
@@ -85,19 +102,26 @@ namespace ksp2community.ksp2unitytools.editor
             {
                 EditorUtility.SetDirty(target);
             }
+
+            GUILayout.Label("Address Overrides (Only Works With Patch Manager)", EditorStyles.boldLabel);
+            var prefabAddress = "%NAME%.prefab";
+            var iconAddress = "%NAME%.png";
+            if (PrefabAddressOverrides.TryGetValue(TargetObject.name, out var newPrefabAddress))
+                prefabAddress = newPrefabAddress;
+            if (IconAddressOverrides.TryGetValue(TargetObject.name, out var newIconAddress))
+                iconAddress = newIconAddress;
+            PrefabAddressOverrides[TargetObject.name] =
+                prefabAddress = EditorGUILayout.TextField("Prefab Address", prefabAddress);
+            IconAddressOverrides[TargetObject.name] =
+                iconAddress = EditorGUILayout.TextField("Icon Address", iconAddress);
+            
             GUILayout.Label("Part Saving", EditorStyles.boldLabel);
             var patchPath = "plugin_template/patches/%NAME%.patch";
             var jsonPath = "%NAME%.json";
-            // if (KSP2UnityToolsManager.Settings.Contains(TargetObject.name))
-            // {
-            //     jsonPath = KSP2UnityToolsManager.Settings.Get(TargetObject.name);
-            //     patchPath = KSP2UnityToolsManager.Settings.GetSecondary(TargetObject.name);
-            // }
-            // _jsonPath = EditorGUILayout.TextField("JSON Path",_jsonPath);
+            if (PatchPaths.TryGetValue(TargetObject.name, out var newPatchPath)) patchPath = newPatchPath;
+            if (JsonPaths.TryGetValue(TargetObject.name, out var newJsonPath)) jsonPath = newJsonPath;
             EditorGUI.BeginChangeCheck();
-            // KSP2UnityToolsManager.Settings.Set(TargetObject.name, patchPath = EditorGUILayout.TextField("Patch Path", patchPath));
-            if (EditorGUI.EndChangeCheck())
-                EditorUtility.SetDirty(KSP2UnityToolsManager.Settings);
+            PatchPaths[TargetObject.name] = patchPath = EditorGUILayout.TextField("Patch Path", patchPath);
             if (GUILayout.Button("Save Patch Manager Patch"))
             {
                 if (!_initialized) Initialize();
@@ -123,7 +147,7 @@ namespace ksp2community.ksp2unitytools.editor
                     TargetCore.data.serializedPartModules.Add(new SerializedPartModule(partBehaviourModule, true));
                 }
 
-                var patchData = PatchManagerTools.CreatePatchData(TargetCore.data);
+                var patchData = PatchManagerTools.CreatePatchData(TargetCore.data,prefabAddress.Replace("%NAME%",TargetCore.data.partName),iconAddress.Replace("%NAME%",TargetCore.data.partName));
                 var path = $"Assets/{patchPath}";
                 path = path.Replace("%NAME%", TargetCore.data.partName);
                 var directoryName = new FileInfo(path).DirectoryName;
@@ -135,9 +159,7 @@ namespace ksp2community.ksp2unitytools.editor
                 EditorUtility.DisplayDialog("Patch Exported", $"Patch is at: {path}", "ok"); 
             }
             EditorGUI.BeginChangeCheck();
-            // KSP2UnityToolsManager.Settings.Set(TargetObject.name, jsonPath = EditorGUILayout.TextField("JSON Path", jsonPath));
-            if (EditorGUI.EndChangeCheck())
-                EditorUtility.SetDirty(KSP2UnityToolsManager.Settings);
+            JsonPaths[TargetObject.name] = jsonPath = EditorGUILayout.TextField("JSON Path", jsonPath);
             if (GUILayout.Button("Save Part JSON"))
             {
                 if (!_initialized) Initialize();
@@ -164,6 +186,10 @@ namespace ksp2community.ksp2unitytools.editor
                 }
 
                 var json = IOProvider.ToJson(TargetCore);
+                var jObject = JObject.Parse(json);
+                jObject["data"]!["PrefabAddress"] = prefabAddress;
+                jObject["data"]["IconAddress"] = iconAddress;
+                json = jObject.ToString(Formatting.Indented);
                 var path = $"Assets/{jsonPath}";
                 path = path.Replace("%NAME%", TargetCore.data.partName);
                 var directoryName = new FileInfo(path).DirectoryName;

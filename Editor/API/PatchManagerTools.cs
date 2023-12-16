@@ -30,22 +30,105 @@ namespace ksp2community.ksp2unitytools.editor.API
         }
         
         [PublicAPI]
-        public static string CreatePatchData(PartData partData)
+        public static string CreatePatchData(PartData partData, string prefabAddress ="",string iconAddress="")
         {
+            if (string.IsNullOrEmpty(prefabAddress)) prefabAddress = $"{partData.partName}.prefab";
+            if (string.IsNullOrEmpty(iconAddress)) iconAddress = $"{partData.partName}.png";
             StringBuilder sb = new StringBuilder();
             sb.Append($"@new({ToLiteral(partData.partName)})\n");
             sb.Append(":parts {\n");
             var indentation = 1;
+            
             sb.Indent(indentation);
-            sb.Append($"PrefabAddress: \"{partData.partName}.prefab\";\n");
+            sb.Append("/*\n");
             sb.Indent(indentation);
-            sb.Append($"IconAddress: \"{partData.partName}.png\";\n");
+            sb.Append("  +-------------------------+\n");
+            sb.Indent(indentation);
+            sb.Append("  | Asset Loading Overrides |\n");
+            sb.Indent(indentation);
+            sb.Append("  +-------------------------+\n");
+            sb.Indent(indentation);
+            sb.Append("*/\n\n");
+            sb.Indent(indentation);
+            sb.Append("/* The addressables address to load the part prefab from */\n");
+            sb.Indent(indentation);
+            sb.Append($"PrefabAddress: {ToLiteral(prefabAddress)};\n");
+            sb.Indent(indentation);
+            sb.Append("/* The addressables address to load the part icon from */\n");
+            sb.Indent(indentation);
+            sb.Append($"IconAddress: {ToLiteral(iconAddress)};\n");
 
             foreach (var field in partData.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
+                var attributes = field.GetCustomAttributes().ToArray();
+                if (attributes.OfType<HeaderAttribute>().FirstOrDefault() is { } headerAttribute)
+                {
+                    var str = headerAttribute.header;
+                    var lines = str.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    var maxLength = lines.Select(x => x.Trim().Length).Max();
+                    sb.Append('\n');
+                    sb.Indent(indentation);
+                    sb.Append("/*\n");
+                    sb.Indent(indentation);
+                    sb.Append("  +-");
+                    for (var i = 0; i < maxLength; i++)
+                    {
+                        sb.Append('-');
+                    }
+                    sb.Append("-+\n");
+                    foreach (var line in lines)
+                    {
+                        sb.Indent(indentation);
+                        sb.Append("  | ");
+                        sb.Append(line.Trim());
+                        sb.Append(" |");
+                        sb.Append('\n');
+                    }
+                    sb.Indent(indentation);
+                    sb.Append("  +-");
+                    for (var i = 0; i < maxLength; i++)
+                    {
+                        sb.Append('-');
+                    }
+                    sb.Append("-+\n");
+
+                    sb.Indent(indentation);
+                    sb.Append("*/\n");
+                    sb.Append("\n");
+                }
+                
                 if (field.Name == "serializedPartModules") continue;
                 if (field.Name == "resourceContainers") continue;
                 if (field.Name == "partName") continue;
+
+                if (attributes.OfType<TooltipAttribute>().FirstOrDefault() is { } tooltipAttribute)
+                {
+                    var tooltip = tooltipAttribute.tooltip;
+                    var lines = tooltip.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length == 1)
+                    {
+                        sb.Indent(indentation);
+                        sb.Append("/* ");
+                        sb.Append(lines[0].Trim());
+                        sb.Append(" */\n");
+                    }
+                    else
+                    {
+                        sb.Indent(indentation);
+                        sb.Append("/*\n");
+                        foreach (var line in lines)
+                        {
+                            sb.Indent(indentation);
+                            sb.Append("  ");
+                            sb.Append(line.Trim());
+                            sb.Append('\n');
+                        }
+
+                        sb.Indent(indentation);
+                        sb.Append("*/\n");
+                    }
+                }
+                
                 sb.Indent(indentation);
                 var key = field.Name;
                 if (!IsValidIdentifier(key)) key = ToLiteral(key);
@@ -54,6 +137,18 @@ namespace ksp2community.ksp2unitytools.editor.API
                 JsonToDataValue(sb, value, indentation, true);
                 sb.Append(";\n");
             }
+
+            sb.Append('\n');
+            sb.Indent(indentation);
+            sb.Append("/*\n");
+            sb.Indent(indentation);
+            sb.Append("  +-----------------------+\n");
+            sb.Indent(indentation);
+            sb.Append("  | Resources and Modules |\n");
+            sb.Indent(indentation);
+            sb.Append("  +-----------------------+\n");
+            sb.Indent(indentation);
+            sb.Append("*/\n\n");
             
             sb.Indent(indentation);
             sb.Append("* > resourceContainers {\n");
@@ -83,7 +178,7 @@ namespace ksp2community.ksp2unitytools.editor.API
         public static string CreatePatchFileData(string ruleset, object value, params object[] constructorArguments)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"@new(");
+            sb.Append("@new(");
             var first = true;
             foreach (var obj in constructorArguments)
             {
@@ -99,7 +194,84 @@ namespace ksp2community.ksp2unitytools.editor.API
                 var jsonObject = JToken.Parse(IOProvider.ToJson(obj));
                 JsonToDataValue(sb,jsonObject);
             }
-            sb.Append(")");
+            sb.Append($")\n:{ruleset} {{\n");
+            var indentation = 1;
+            foreach (var field in value.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                var attributes = field.GetCustomAttributes().ToArray();
+                if (attributes.OfType<HeaderAttribute>().FirstOrDefault() is { } headerAttribute)
+                {
+                    var str = headerAttribute.header;
+                    var lines = str.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    var maxLength = lines.Select(x => x.Trim().Length).Max();
+                    sb.Append('\n');
+                    sb.Indent(indentation);
+                    sb.Append("/*\n");
+                    sb.Indent(indentation);
+                    sb.Append("  +-");
+                    for (var i = 0; i < maxLength; i++)
+                    {
+                        sb.Append('-');
+                    }
+                    sb.Append("-+\n");
+                    foreach (var line in lines)
+                    {
+                        sb.Indent(indentation);
+                        sb.Append("  | ");
+                        sb.Append(line.Trim());
+                        sb.Append(" |");
+                        sb.Append('\n');
+                    }
+                    sb.Indent(indentation);
+                    sb.Append("  +-");
+                    for (var i = 0; i < maxLength; i++)
+                    {
+                        sb.Append('-');
+                    }
+                    sb.Append("-+\n");
+
+                    sb.Indent(indentation);
+                    sb.Append("*/\n");
+                    sb.Append("\n");
+                }
+                if (attributes.OfType<TooltipAttribute>().FirstOrDefault() is { } tooltipAttribute)
+                {
+                    var tooltip = tooltipAttribute.tooltip;
+                    var lines = tooltip.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length == 1)
+                    {
+                        sb.Indent(indentation);
+                        sb.Append("/* ");
+                        sb.Append(lines[0].Trim());
+                        sb.Append(" */\n");
+                    }
+                    else
+                    {
+                        sb.Indent(indentation);
+                        sb.Append("/*\n");
+                        foreach (var line in lines)
+                        {
+                            sb.Indent(indentation);
+                            sb.Append("  ");
+                            sb.Append(line.Trim());
+                            sb.Append('\n');
+                        }
+
+                        sb.Indent(indentation);
+                        sb.Append("*/\n");
+                    }
+                }
+                
+                sb.Indent(indentation);
+                var key = field.Name;
+                if (!IsValidIdentifier(key)) key = ToLiteral(key);
+                sb.Append($"{key}: ");
+                var val = JToken.Parse(IOProvider.ToJson(field.GetValue(value)));
+                JsonToDataValue(sb, val, indentation, true);
+                sb.Append(";\n");
+            }
+
+            sb.Append("}");
             return sb.ToString();
         }
 
@@ -250,6 +422,42 @@ namespace ksp2community.ksp2unitytools.editor.API
                                                         BindingFlags.NonPublic))
                 {
                     var attrs = field.GetCustomAttributes().ToList();
+                    if (attrs.OfType<HeaderAttribute>().FirstOrDefault() is { } headerAttribute)
+                    {
+                        var str = headerAttribute.header;
+                        var lines = str.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                        var maxLength = lines.Select(x => x.Trim().Length).Max();
+                        sb.Append('\n');
+                        sb.Indent(internalIndentation);
+                        sb.Append("/*\n");
+                        sb.Indent(internalIndentation);
+                        sb.Append("  +-");
+                        for (var i = 0; i < maxLength; i++)
+                        {
+                            sb.Append('-');
+                        }
+                        sb.Append("-+\n");
+                        foreach (var line in lines)
+                        {
+                            sb.Indent(internalIndentation);
+                            sb.Append("  | ");
+                            sb.Append(line.Trim());
+                            sb.Append(" |");
+                            sb.Append('\n');
+                        }
+                        sb.Indent(internalIndentation);
+                        sb.Append("  +-");
+                        for (var i = 0; i < maxLength; i++)
+                        {
+                            sb.Append('-');
+                        }
+                        sb.Append("-+\n");
+
+                        sb.Indent(internalIndentation);
+                        sb.Append("*/\n");
+                        sb.Append("\n");
+                    }
+                    
                     if (attrs.OfType<JsonIgnoreAttribute>().FirstOrDefault() is not null) continue;
                     if (attrs.OfType<KSPStateAttribute>().FirstOrDefault() is not null) continue;
                     if (attrs.OfType<KSPDefinitionAttribute>().FirstOrDefault() is null) continue;
