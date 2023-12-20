@@ -5,6 +5,8 @@ using KSP.IO;
 using KSP.Modules;
 using KSP.Sim.Definitions;
 using ksp2community.ksp2unitytools.editor.API;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -23,6 +25,7 @@ namespace ksp2community.ksp2unitytools.editor
         private static bool _centerOfMassGizmos = true;
         private static bool _centerOfLiftGizmos = true;
         private static bool _attachNodeGizmos = true;
+        
 
         public static bool DragCubeGizmos = true;
 
@@ -32,8 +35,21 @@ namespace ksp2community.ksp2unitytools.editor
             typeof(IOProvider).GetMethod("Init", BindingFlags.Static | BindingFlags.NonPublic)
                 ?.Invoke(null, new object[] { });
             _initialized = true;
-            Module_Engine mod;
         }
+
+
+        private static PersistentDictionary _patchPaths;
+        private static PersistentDictionary PatchPaths => _patchPaths ??= KSP2UnityToolsManager.GetDictionary("PatchPaths");
+
+        private static PersistentDictionary _jsonPaths;
+        private static PersistentDictionary JsonPaths => _jsonPaths ??= KSP2UnityToolsManager.GetDictionary("JsonPaths");
+
+        private static PersistentDictionary _prefabAddressOverrides;
+        private static PersistentDictionary PrefabAddressOverrides => _prefabAddressOverrides ??= KSP2UnityToolsManager.GetDictionary("PrefabAddressOverrides");
+
+        private static PersistentDictionary _iconAddressOverrides;
+        private static PersistentDictionary IconAddressOverrides => _iconAddressOverrides ??= KSP2UnityToolsManager.GetDictionary("IconAddressOverrides");
+        
 
         private GameObject TargetObject => TargetData.gameObject;
         private CorePartData TargetData => target as CorePartData;
@@ -86,44 +102,105 @@ namespace ksp2community.ksp2unitytools.editor
             {
                 EditorUtility.SetDirty(target);
             }
+
+            GUILayout.Label("Address Overrides (Only Works With Patch Manager)", EditorStyles.boldLabel);
+            var prefabAddress = "%NAME%.prefab";
+            var iconAddress = "%NAME%.png";
+            if (PrefabAddressOverrides.TryGetValue(TargetObject.name, out var newPrefabAddress))
+                prefabAddress = newPrefabAddress;
+            if (IconAddressOverrides.TryGetValue(TargetObject.name, out var newIconAddress))
+                iconAddress = newIconAddress;
+            PrefabAddressOverrides[TargetObject.name] =
+                prefabAddress = EditorGUILayout.TextField("Prefab Address", prefabAddress);
+            IconAddressOverrides[TargetObject.name] =
+                iconAddress = EditorGUILayout.TextField("Icon Address", iconAddress);
+            
             GUILayout.Label("Part Saving", EditorStyles.boldLabel);
-            string _jsonPath = "%NAME%.json";
-            if (KSP2UnityToolsManager.Settings.Contains(TargetObject.name))
-            {
-                _jsonPath = KSP2UnityToolsManager.Settings.Get(TargetObject.name);
-            }
-            // _jsonPath = EditorGUILayout.TextField("JSON Path",_jsonPath);
+            var patchPath = "plugin_template/patches/%NAME%.patch";
+            var jsonPath = "%NAME%.json";
+            if (PatchPaths.TryGetValue(TargetObject.name, out var newPatchPath)) patchPath = newPatchPath;
+            if (JsonPaths.TryGetValue(TargetObject.name, out var newJsonPath)) jsonPath = newJsonPath;
             EditorGUI.BeginChangeCheck();
-            KSP2UnityToolsManager.Settings.Set(TargetObject.name, _jsonPath = EditorGUILayout.TextField("JSON Path", _jsonPath));
-            if (EditorGUI.EndChangeCheck())
-                EditorUtility.SetDirty(KSP2UnityToolsManager.Settings);
-            if (!GUILayout.Button("Save Part JSON")) return;
-            if (!_initialized) Initialize();
-            if (TargetCore == null) return;
-            // Clear out the serialized part modules and reserialize them
-            TargetCore.data.serializedPartModules.Clear();
-            foreach (var child in TargetObject.GetComponents<Component>())
+            PatchPaths[TargetObject.name] = patchPath = EditorGUILayout.TextField("Patch Path", patchPath);
+            if (GUILayout.Button("Save Patch Manager Patch"))
             {
-                if (!(child is PartBehaviourModule partBehaviourModule)) continue;
-                var addMethod = child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.NonPublic) ??
-                                child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.Public);
-                addMethod?.Invoke(child, new object[] { });
-                foreach (var data in partBehaviourModule.DataModules.Values)
+                if (!_initialized) Initialize();
+                if (TargetCore == null) return;
+                // Clear out the serialized part modules and reserialize them
+                TargetCore.data.serializedPartModules.Clear();
+                foreach (var child in TargetObject.GetComponents<Component>())
                 {
-                    var rebuildMethod = data.GetType().GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.NonPublic) ?? data.GetType().GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.Public);
-                    rebuildMethod?.Invoke(data, new object[] { });
+                    if (!(child is PartBehaviourModule partBehaviourModule)) continue;
+                    var addMethod =
+                        child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                        child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.Public);
+                    addMethod?.Invoke(child, new object[] { });
+                    foreach (var data in partBehaviourModule.DataModules.Values)
+                    {
+                        var rebuildMethod =
+                            data.GetType().GetMethod("RebuildDataContext",
+                                BindingFlags.Instance | BindingFlags.NonPublic) ?? data.GetType()
+                                .GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.Public);
+                        rebuildMethod?.Invoke(data, new object[] { });
+                    }
+
+                    TargetCore.data.serializedPartModules.Add(new SerializedPartModule(partBehaviourModule, true));
                 }
-                TargetCore.data.serializedPartModules.Add(new SerializedPartModule(partBehaviourModule,false));
+
+                var patchData = PatchManagerTools.CreatePatchData(TargetCore.data,prefabAddress.Replace("%NAME%",TargetCore.data.partName),iconAddress.Replace("%NAME%",TargetCore.data.partName));
+                var path = $"Assets/{patchPath}";
+                path = path.Replace("%NAME%", TargetCore.data.partName);
+                var directoryName = new FileInfo(path).DirectoryName;
+                Directory.CreateDirectory(directoryName);
+                File.WriteAllText($"{path}", patchData);
+                AssetDatabase.ImportAsset(path);
+                AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
+                EditorUtility.DisplayDialog("Patch Exported", $"Patch is at: {path}", "ok"); 
             }
-            var json = IOProvider.ToJson(TargetCore);
-            var path = $"Assets/{_jsonPath}";
-            path = path.Replace("%NAME%", TargetCore.data.partName);
-            File.WriteAllText($"{path}", json);
-            AssetDatabase.ImportAsset(path);
-            AddressablesTools.MakeAddressable(path,$"{TargetCore.data.partName}.json", "parts_data");
-            AssetDatabase.Refresh();
-            AssetDatabase.SaveAssets();
-            EditorUtility.DisplayDialog("Part Exported", $"Json is at: {path}", "ok");
+            EditorGUI.BeginChangeCheck();
+            JsonPaths[TargetObject.name] = jsonPath = EditorGUILayout.TextField("JSON Path", jsonPath);
+            if (GUILayout.Button("Save Part JSON"))
+            {
+                if (!_initialized) Initialize();
+                if (TargetCore == null) return;
+                // Clear out the serialized part modules and reserialize them
+                TargetCore.data.serializedPartModules.Clear();
+                foreach (var child in TargetObject.GetComponents<Component>())
+                {
+                    if (!(child is PartBehaviourModule partBehaviourModule)) continue;
+                    var addMethod =
+                        child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                        child.GetType().GetMethod("AddDataModules", BindingFlags.Instance | BindingFlags.Public);
+                    addMethod?.Invoke(child, new object[] { });
+                    foreach (var data in partBehaviourModule.DataModules.Values)
+                    {
+                        var rebuildMethod =
+                            data.GetType().GetMethod("RebuildDataContext",
+                                BindingFlags.Instance | BindingFlags.NonPublic) ?? data.GetType()
+                                .GetMethod("RebuildDataContext", BindingFlags.Instance | BindingFlags.Public);
+                        rebuildMethod?.Invoke(data, new object[] { });
+                    }
+
+                    TargetCore.data.serializedPartModules.Add(new SerializedPartModule(partBehaviourModule, false));
+                }
+
+                var json = IOProvider.ToJson(TargetCore);
+                var jObject = JObject.Parse(json);
+                jObject["data"]!["PrefabAddress"] = prefabAddress;
+                jObject["data"]["IconAddress"] = iconAddress;
+                json = jObject.ToString(Formatting.Indented);
+                var path = $"Assets/{jsonPath}";
+                path = path.Replace("%NAME%", TargetCore.data.partName);
+                var directoryName = new FileInfo(path).DirectoryName;
+                Directory.CreateDirectory(directoryName);
+                File.WriteAllText($"{path}", json);
+                AssetDatabase.ImportAsset(path);
+                AddressablesTools.MakeAddressable(path, $"{TargetCore.data.partName}.json", "parts_data");
+                AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
+                EditorUtility.DisplayDialog("Part Exported", $"Json is at: {path}", "ok");
+            }
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.Selected)]
