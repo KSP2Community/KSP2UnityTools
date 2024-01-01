@@ -397,6 +397,7 @@ namespace ksp2community.ksp2unitytools.editor
                 if (file.Extension == ".meta") continue;
                 if (KSP2UnityToolsManager.Settings.ignoredFiles.Contains(file.Name)) continue;
                 string targetFilePath = Path.Combine(destinationDir, file.Name);
+                if (File.Exists(targetFilePath)) File.Delete(targetFilePath);
                 file.CopyTo(targetFilePath);
             }
 
