@@ -34,11 +34,11 @@
         <ui:Label tabindex="-1" text="Mod Testing" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; -unity-font-style: bold;" />
     </ui:ScrollView>
     <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
-        <ui:TextField picking-mode="Ignore" label="In Game Mod Folder" name="ModAddressablesFolder" tooltip="This points to the addressables folder of your mod in game" style="flex-grow: 1;" />
+        <ui:TextField picking-mode="Ignore" label="In Game Mod Folder" name="ModAddressablesFolder" tooltip="This points to the addressables folder of your mod in game" style="flex-grow: 1; flex-shrink: 1;" />
         <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseAddressablesPath" />
     </ui:VisualElement>
     <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
-        <ui:TextField picking-mode="Ignore" label="Game Path" name="GamePath" tooltip="Points to KSP2_x64.exe" style="flex-grow: 1;" />
+        <ui:TextField picking-mode="Ignore" label="Game Path" name="GamePath" tooltip="Points to KSP2_x64.exe" style="flex-grow: 1; flex-shrink: 1;" />
         <ui:Button text="Browse" display-tooltip-when-elided="true" name="BrowseGamePath" />
     </ui:VisualElement>
     <ui:Button text="Build And Test" display-tooltip-when-elided="true" name="BuildAndLaunch" />
