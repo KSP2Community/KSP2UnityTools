@@ -187,8 +187,8 @@ namespace ksp2community.ksp2unitytools.editor
 
                 var json = IOProvider.ToJson(TargetCore);
                 var jObject = JObject.Parse(json);
-                jObject["data"]!["PrefabAddress"] = prefabAddress;
-                jObject["data"]["IconAddress"] = iconAddress;
+                jObject["data"]!["PrefabAddress"] = prefabAddress.Replace("%NAME%", TargetCore.data.partName);
+                jObject["data"]["IconAddress"] = iconAddress.Replace("%NAME%", TargetCore.data.partName);
                 json = jObject.ToString(Formatting.Indented);
                 var path = $"Assets/{jsonPath}";
                 path = path.Replace("%NAME%", TargetCore.data.partName);
