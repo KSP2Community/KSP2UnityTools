@@ -39,24 +39,24 @@ namespace ksp2community.ksp2unitytools.editor.API
             sb.Append(":parts {\n");
             var indentation = 1;
             
-            sb.Indent(indentation);
-            sb.Append("/*\n");
-            sb.Indent(indentation);
-            sb.Append("  +-------------------------+\n");
-            sb.Indent(indentation);
-            sb.Append("  | Asset Loading Overrides |\n");
-            sb.Indent(indentation);
-            sb.Append("  +-------------------------+\n");
-            sb.Indent(indentation);
-            sb.Append("*/\n\n");
-            sb.Indent(indentation);
-            sb.Append("/* The addressables address to load the part prefab from */\n");
-            sb.Indent(indentation);
-            sb.Append($"PrefabAddress: {ToLiteral(prefabAddress)};\n");
-            sb.Indent(indentation);
-            sb.Append("/* The addressables address to load the part icon from */\n");
-            sb.Indent(indentation);
-            sb.Append($"IconAddress: {ToLiteral(iconAddress)};\n");
+            // sb.Indent(indentation);
+            // sb.Append("/*\n");
+            // sb.Indent(indentation);
+            // sb.Append("  +-------------------------+\n");
+            // sb.Indent(indentation);
+            // sb.Append("  | Asset Loading Overrides |\n");
+            // sb.Indent(indentation);
+            // sb.Append("  +-------------------------+\n");
+            // sb.Indent(indentation);
+            // sb.Append("*/\n\n");
+            // sb.Indent(indentation);
+            // sb.Append("/* The addressables address to load the part prefab from */\n");
+            // sb.Indent(indentation);
+            // sb.Append($"PrefabAddress: {ToLiteral(prefabAddress)};\n");
+            // sb.Indent(indentation);
+            // sb.Append("/* The addressables address to load the part icon from */\n");
+            // sb.Indent(indentation);
+            // sb.Append($"IconAddress: {ToLiteral(iconAddress)};\n");
 
             foreach (var field in partData.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
