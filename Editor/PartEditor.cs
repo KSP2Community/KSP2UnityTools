@@ -120,7 +120,6 @@ namespace ksp2community.ksp2unitytools.editor
             var jsonPath = "%NAME%.json";
             if (PatchPaths.TryGetValue(TargetObject.name, out var newPatchPath)) patchPath = newPatchPath;
             if (JsonPaths.TryGetValue(TargetObject.name, out var newJsonPath)) jsonPath = newJsonPath;
-            EditorGUI.BeginChangeCheck();
             PatchPaths[TargetObject.name] = patchPath = EditorGUILayout.TextField("Patch Path", patchPath);
             if (GUILayout.Button("Save Patch Manager Patch"))
             {
@@ -158,7 +157,6 @@ namespace ksp2community.ksp2unitytools.editor
                 AssetDatabase.SaveAssets();
                 EditorUtility.DisplayDialog("Patch Exported", $"Patch is at: {path}", "ok"); 
             }
-            EditorGUI.BeginChangeCheck();
             JsonPaths[TargetObject.name] = jsonPath = EditorGUILayout.TextField("JSON Path", jsonPath);
             if (GUILayout.Button("Save Part JSON"))
             {

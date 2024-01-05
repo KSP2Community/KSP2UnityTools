@@ -291,6 +291,10 @@ namespace ksp2community.ksp2unitytools.editor
             {
                 settings.AddLabel("parts_data");
             }
+            if (!settings.GetLabels().Contains("celestial_bodies"))
+            {
+                settings.AddLabel("celestial_bodies");
+            }
 
             AddressableAssetGroup assetGroup;
             if (settings.groups.Any(x => x.name == sanitizedId))
