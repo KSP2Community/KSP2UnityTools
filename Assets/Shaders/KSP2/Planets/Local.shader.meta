@@ -1,0 +1,79 @@
+fileFormatVersion: 2
+guid: e2573da5c8e08894cb92a946278fa61c
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _AlbedoScaledTex: {instanceID: 0}
+  - _NormalScaledTex: {instanceID: 0}
+  - _PackedScaledTex: {instanceID: 0}
+  - _EmissionScaledTex: {instanceID: 0}
+  - _BiomeMaskTex: {instanceID: 0}
+  - _SubzoneMaskTex: {instanceID: 0}
+  - _GlobalGradienceTex: {instanceID: 0}
+  - _GlobalCurvatureTex: {instanceID: 0}
+  - _SubZonesNormalTextureArray: {instanceID: 0}
+  - _LargeCurvatureR: {instanceID: 0}
+  - _LargeCurvatureG: {instanceID: 0}
+  - _LargeCurvatureB: {instanceID: 0}
+  - _LargeCurvatureA: {instanceID: 0}
+  - _LargeGradienceR: {instanceID: 0}
+  - _LargeGradienceG: {instanceID: 0}
+  - _LargeGradienceB: {instanceID: 0}
+  - _LargeGradienceA: {instanceID: 0}
+  - _LargeNormalR: {instanceID: 0}
+  - _LargeNormalG: {instanceID: 0}
+  - _LargeNormalB: {instanceID: 0}
+  - _LargeNormalA: {instanceID: 0}
+  - _MidCurvatureR: {instanceID: 0}
+  - _MidCurvatureG: {instanceID: 0}
+  - _MidCurvatureB: {instanceID: 0}
+  - _MidCurvatureA: {instanceID: 0}
+  - _MidGradienceR: {instanceID: 0}
+  - _MidGradienceG: {instanceID: 0}
+  - _MidGradienceB: {instanceID: 0}
+  - _MidGradienceA: {instanceID: 0}
+  - _MidNormalR: {instanceID: 0}
+  - _MidNormalG: {instanceID: 0}
+  - _MidNormalB: {instanceID: 0}
+  - _MidNormalA: {instanceID: 0}
+  - _Subzone3CurvatureR: {instanceID: 0}
+  - _Subzone3CurvatureG: {instanceID: 0}
+  - _Subzone3CurvatureB: {instanceID: 0}
+  - _Subzone3CurvatureA: {instanceID: 0}
+  - _Subzone3GradienceR: {instanceID: 0}
+  - _Subzone3GradienceG: {instanceID: 0}
+  - _Subzone3GradienceB: {instanceID: 0}
+  - _Subzone3GradienceA: {instanceID: 0}
+  - _Subzone3NormalR: {instanceID: 0}
+  - _Subzone3NormalG: {instanceID: 0}
+  - _Subzone3NormalB: {instanceID: 0}
+  - _Subzone3NormalA: {instanceID: 0}
+  - _Subzone4CurvatureR: {instanceID: 0}
+  - _Subzone4CurvatureG: {instanceID: 0}
+  - _Subzone4CurvatureB: {instanceID: 0}
+  - _Subzone4CurvatureA: {instanceID: 0}
+  - _Subzone4GradienceR: {instanceID: 0}
+  - _Subzone4GradienceG: {instanceID: 0}
+  - _Subzone4GradienceB: {instanceID: 0}
+  - _Subzone4GradienceA: {instanceID: 0}
+  - _Subzone4NormalR: {instanceID: 0}
+  - _Subzone4NormalG: {instanceID: 0}
+  - _Subzone4NormalB: {instanceID: 0}
+  - _Subzone4NormalA: {instanceID: 0}
+  - _SmallAlbedoArray: {instanceID: 0}
+  - _SmallNormalArray: {instanceID: 0}
+  - _SmallMetalArray: {instanceID: 0}
+  - _DecalAlbedo: {instanceID: 0}
+  - _DecalNormalSAO: {instanceID: 0}
+  - _DecalControl: {instanceID: 0}
+  - _DecalStaticData: {instanceID: 0}
+  - _ShorelineTex: {instanceID: 0}
+  - _LocalSpacePrepassTex0: {instanceID: 0}
+  - _LocalSpacePrepassTex1: {instanceID: 0}
+  - _LocalSpacePrepassTex2: {instanceID: 0}
+  - _LocalSpacePrepassTex3: {instanceID: 0}
+  - _LocalSpacePrepassTex4: {instanceID: 0}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
