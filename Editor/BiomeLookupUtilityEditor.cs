@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using KSP.Rendering.Planets;
 using ksp2community.ksp2unitytools.editor.ScriptableObjects;
 using UnityEditor;
@@ -40,6 +41,7 @@ namespace ksp2community.ksp2unitytools.editor
                 }
                 
                 var lut = CreateInstance<BiomeTextureColorLookupTable>();
+                lut.BiomeLookupPairs = new List<BiomeLookupEditorPair>();
                 var hashmap = CreateInstance<BiomeLookupHashTable>();
                 
                 for (var i = 0; i < Target.colorMapping.Count; i++)
