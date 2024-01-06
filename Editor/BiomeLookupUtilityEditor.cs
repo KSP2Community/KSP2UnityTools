@@ -65,11 +65,10 @@ namespace ksp2community.ksp2unitytools.editor
                         };
                     }
                 }
-                
+                EditorUtility.ClearProgressBar();
                 AssetDatabase.CreateAsset(hashmap,
                     AssetDatabase.GenerateUniqueAssetPath(path + $"/{hashMapName}.asset"));
                 AssetDatabase.Refresh();
-                EditorUtility.ClearProgressBar();
             }
         }
     }
