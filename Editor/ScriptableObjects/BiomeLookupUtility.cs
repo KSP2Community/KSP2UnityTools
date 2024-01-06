@@ -88,24 +88,20 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
                 int endX = startX, endY = startY;
                 for (; endX < 16; endX++)
                 {
-                    if (indices[startY, startX] == index) continue;
-                    endX -= 1;
-                    break;
+                    if (indices[startY, endX] != index) break;
                 }
+                endX -= 1;
 
                 for (; endY < 16; endY++)
                 {
-                    var foundEnd = false;
                     for (var x = startX; x <= endX; x++)
                     {
                         if (indices[endY, x] == index) continue;
-                        foundEnd = true;
-                        break;
+                        goto found_end;
                     }
-                    if (!foundEnd) continue;
-                    endY -= 1;
-                    break;
                 }
+                found_end:
+                endY -= 1;
 
                 result.Add(new RectangleInfo
                 {
