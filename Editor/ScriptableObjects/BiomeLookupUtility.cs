@@ -29,10 +29,10 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
             if (biomeMap == null) return result;
             for (var y = 0; y < 16; y++)
             {
-                var scaledY = y16 * 16 + y;
+                var scaledY = y16 + y;
                 for (var x = 0; x < 16; x++)
                 {
-                    result[y, x] = GetScaled(x16 + x, y16);
+                    result[y, x] = GetScaled(x16 + x, scaledY);
                 }
             }
             return result;
