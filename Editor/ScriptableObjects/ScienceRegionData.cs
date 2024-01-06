@@ -18,15 +18,15 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
         {
             var bestIndex = 0;
             var closestDistance = float.MaxValue;
-            for (var i = 0; i < information.ScienceRegionDefinitions.Length; i++)
+            foreach (var region in information.ScienceRegionDefinitions)
             {
-                var indexColor = information.ScienceRegionDefinitions[i].RegionColor;
+                var indexColor = region.RegionColor;
                 var distanceSquared = (col.r - indexColor.r) * (col.r - indexColor.r) +
                                       (col.g - indexColor.g) * (col.g - indexColor.g) +
                                       (col.b - indexColor.b) * (col.b - indexColor.b);
                 if (!(distanceSquared < closestDistance)) continue;
                 closestDistance = distanceSquared;
-                bestIndex = i;
+                bestIndex = region.MapId;
             }
             return bestIndex;
         }
