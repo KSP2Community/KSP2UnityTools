@@ -59,6 +59,10 @@ namespace ksp2community.ksp2unitytools.editor
                         var index = y * 256;
                         EditorUtility.DisplayProgressBar("Baking Biome Map",
                             $"Building Hashmap (x = {x:03}/255, y = {y:03}/255)", index / 65535.0f);
+                        hashmap.Cells[index] = new BiomeLookupHashCell
+                        {
+                            BiomeChunks = Target.GetCell(x,y)
+                        };
                     }
                 }
                 
