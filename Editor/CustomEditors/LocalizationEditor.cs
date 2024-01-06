@@ -1,20 +1,19 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using I2.Loc;
-using ksp2community.ksp2unitytools.editor.Editor.Extensions;
 using UnityEditor;
 using UnityEngine;
 
-namespace ksp2community.ksp2unitytools.editor
+namespace ksp2community.ksp2unitytools.editor.CustomEditors
 {
-    [CustomEditor(typeof(LanguageSourceAsset))]
-    public class AssetLocalizationEditor : UnityEditor.Editor
+    [CustomEditor(typeof(LanguageSource))]
+    public class LocalizationEditor : UnityEditor.Editor
     {
-        private Dictionary<string, bool> termFoldouts = new();
-        private Dictionary<string, bool> titleFoldouts = new();
-        private Dictionary<string, bool> subtitleFoldouts = new();
-        private Dictionary<string, bool> manufacturerFoldouts = new();
-        private Dictionary<string, bool> descriptionFoldouts = new();
-        private SerializedProperty mSource;
+        private SerializedProperty _onMissingTranslation;
+        private Dictionary<string, bool> termFoldouts = new Dictionary<string, bool>();
+        private Dictionary<string, bool> titleFoldouts = new Dictionary<string, bool>();
+        private Dictionary<string, bool> subtitleFoldouts = new Dictionary<string, bool>();
+        private Dictionary<string, bool> manufacturerFoldouts = new Dictionary<string, bool>();
+        private Dictionary<string, bool> descriptionFoldouts = new Dictionary<string, bool>();
 
         private static bool GetOrSetFalseIfNot(IDictionary<string, bool> foldout, string name)
         {
@@ -22,14 +21,12 @@ namespace ksp2community.ksp2unitytools.editor
             {
                 return val;
             }
-
             foldout[name] = false;
             return false;
         }
-
         void OnEnable()
         {
-            mSource = serializedObject.FindProperty("mSource");
+            _onMissingTranslation = serializedObject.FindProperty("OnMissingTranslation");
         }
 
         private static void DrawHorizontalLine()
@@ -41,7 +38,7 @@ namespace ksp2community.ksp2unitytools.editor
         {
             DrawHorizontalLine(Color.gray, 1);
         }
-
+    
         private static void DrawHorizontalLine(Color color, int thickness = 2, int padding = 4)
         {
             Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
@@ -51,7 +48,7 @@ namespace ksp2community.ksp2unitytools.editor
             r.width += 14;
             EditorGUI.DrawRect(r, color);
         }
-
+    
         private static void DrawVerticalLine()
         {
             DrawVerticalLine(Color.gray);
@@ -61,7 +58,7 @@ namespace ksp2community.ksp2unitytools.editor
         {
             DrawVerticalLine(Color.gray, 1);
         }
-
+    
         private static void DrawVerticalLine(Color color, int thickness = 2, int padding = 4)
         {
             Rect r = EditorGUILayout.GetControlRect(GUILayout.Width(padding + thickness));
@@ -75,28 +72,24 @@ namespace ksp2community.ksp2unitytools.editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            EditorGUILayout.PropertyField(_onMissingTranslation);
+            serializedObject.ApplyModifiedProperties();
             // Now here we add the language fields
             // Given that the script runs in the editor it should be fine
-            var targetContainerObject = serializedObject.targetObject as LanguageSourceAsset;
-            var targetObject = targetContainerObject.mSource;
-            var missing = EditorGUILayout.EnumPopup("On Missing Translation", targetObject.OnMissingTranslation);
-            targetObject.OnMissingTranslation = missing is LanguageSourceData.MissingTranslationAction action
-                ? action
-                : LanguageSourceData.MissingTranslationAction.Empty;
+            var targetObject = serializedObject.targetObject as LanguageSource;
             var targetLanguages = targetObject!.mLanguages;
             var removeAtIndices = new List<int>();
-            EditorGUILayout.LabelField("Languages", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Languages",EditorStyles.boldLabel);
             DrawHorizontalLine();
             for (var i = 0; i < targetLanguages.Count; i++)
             {
-                targetLanguages[i].Name = EditorGUILayout.TextField("Name", targetLanguages[i].Name);
+                targetLanguages[i].Name = EditorGUILayout.TextField("Name",targetLanguages[i].Name);
                 targetLanguages[i].Code = EditorGUILayout.TextField("Code", targetLanguages[i].Code);
                 targetLanguages[i].Flags = 0;
                 if (GUILayout.Button("Remove Language"))
                 {
                     removeAtIndices.Add(i);
                 }
-
                 DrawThinHorizontalLine();
             }
 
@@ -109,7 +102,6 @@ namespace ksp2community.ksp2unitytools.editor
             {
                 targetLanguages.Add(new LanguageData());
             }
-
             DrawHorizontalLine();
 
             //TODO: Specific term editor for part descriptions and such
@@ -131,17 +123,16 @@ namespace ksp2community.ksp2unitytools.editor
                     {
                         val = partsEditors[index].Indices;
                         val.Title = i;
-                        partsEditors[index] = (partName, val);
+                        partsEditors[index] = (partName,val);
                     }
                     else
                     {
                         index = partsEditors.Count;
                         partsIndices[partName] = index;
                         val.Title = i;
-                        partsEditors.Add((partName, val));
+                        partsEditors.Add((partName,val));
                     }
                 }
-
                 if (term.Term.StartsWith("Parts/Subtitle/"))
                 {
                     var partName = term.Term.Substring("Parts/Subtitle/".Length);
@@ -150,17 +141,16 @@ namespace ksp2community.ksp2unitytools.editor
                     {
                         val = partsEditors[index].Indices;
                         val.Subtitle = i;
-                        partsEditors[index] = (partName, val);
+                        partsEditors[index] = (partName,val);
                     }
                     else
                     {
                         index = partsEditors.Count;
                         partsIndices[partName] = index;
                         val.Subtitle = i;
-                        partsEditors.Add((partName, val));
+                        partsEditors.Add((partName,val));
                     }
                 }
-
                 if (term.Term.StartsWith("Parts/Manufacturer/"))
                 {
                     var partName = term.Term.Substring("Parts/Manufacturer/".Length);
@@ -169,17 +159,16 @@ namespace ksp2community.ksp2unitytools.editor
                     {
                         val = partsEditors[index].Indices;
                         val.Manufacturer = i;
-                        partsEditors[index] = (partName, val);
+                        partsEditors[index] = (partName,val);
                     }
                     else
                     {
                         index = partsEditors.Count;
                         partsIndices[partName] = index;
                         val.Manufacturer = i;
-                        partsEditors.Add((partName, val));
+                        partsEditors.Add((partName,val));
                     }
                 }
-
                 if (term.Term.StartsWith("Parts/Description/"))
                 {
                     var partName = term.Term.Substring("Parts/Description/".Length);
@@ -188,25 +177,24 @@ namespace ksp2community.ksp2unitytools.editor
                     {
                         val = partsEditors[index].Indices;
                         val.Description = i;
-                        partsEditors[index] = (partName, val);
+                        partsEditors[index] = (partName,val);
                     }
                     else
                     {
                         index = partsEditors.Count;
                         partsIndices[partName] = index;
                         val.Description = i;
-                        partsEditors.Add((partName, val));
+                        partsEditors.Add((partName,val));
                     }
                 }
             }
-
+        
             removeAtIndices = new List<int>();
 
             var partIndex = 0;
             foreach (var pair in partsEditors.ToArray())
             {
-                if (pair.Indices.Subtitle == null || pair.Indices.Description == null ||
-                    pair.Indices.Manufacturer == null ||
+                if (pair.Indices.Subtitle == null || pair.Indices.Description == null || pair.Indices.Manufacturer == null ||
                     pair.Indices.Title == null)
                 {
                     removeAtIndices.Add(partIndex);
@@ -221,7 +209,7 @@ namespace ksp2community.ksp2unitytools.editor
 
                 partIndex += 1;
             }
-
+        
             for (var i = removeAtIndices.Count - 1; i >= 0; i--)
             {
                 partsEditors.RemoveAt(removeAtIndices[i]);
@@ -246,7 +234,6 @@ namespace ksp2community.ksp2unitytools.editor
                 {
                     removeAtIndices.Add(i);
                 }
-
                 DrawThinHorizontalLine();
             }
 
@@ -254,7 +241,6 @@ namespace ksp2community.ksp2unitytools.editor
             {
                 targetTerms.Add(new TermData());
             }
-
             DrawHorizontalLine();
             EditorGUILayout.LabelField("Parts", EditorStyles.boldLabel);
             DrawHorizontalLine();
@@ -274,30 +260,22 @@ namespace ksp2community.ksp2unitytools.editor
                     targetTerms[manufacturer].Term = "Parts/Manufacturer/" + partName;
                     targetTerms[description].Term = "Parts/Description/" + partName;
                 }
-
-                if (titleFoldouts[partName] =
-                    EditorGUILayout.Foldout(GetOrSetFalseIfNot(titleFoldouts, partName), "Title"))
+                if (titleFoldouts[partName] = EditorGUILayout.Foldout(GetOrSetFalseIfNot(titleFoldouts,partName),"Title"))
                 {
                     targetTerms[title].TermType = eTermType.Text;
                     ShowTermEditorFor(targetTerms, title, targetLanguages);
                 }
-
-                if (subtitleFoldouts[partName] =
-                    EditorGUILayout.Foldout(GetOrSetFalseIfNot(subtitleFoldouts, partName), "Subtitle"))
+                if (subtitleFoldouts[partName] = EditorGUILayout.Foldout(GetOrSetFalseIfNot(subtitleFoldouts,partName),"Subtitle"))
                 {
                     targetTerms[subtitle].TermType = eTermType.Text;
                     ShowTermEditorFor(targetTerms, subtitle, targetLanguages);
                 }
-
-                if (manufacturerFoldouts[partName] =
-                    EditorGUILayout.Foldout(GetOrSetFalseIfNot(manufacturerFoldouts, partName), "Manufacturer"))
+                if (manufacturerFoldouts[partName] = EditorGUILayout.Foldout(GetOrSetFalseIfNot(manufacturerFoldouts,partName),"Manufacturer"))
                 {
                     targetTerms[manufacturer].TermType = eTermType.Text;
                     ShowTermEditorFor(targetTerms, manufacturer, targetLanguages);
                 }
-
-                if (descriptionFoldouts[partName] =
-                    EditorGUILayout.Foldout(GetOrSetFalseIfNot(descriptionFoldouts, partName), "Description"))
+                if (descriptionFoldouts[partName] = EditorGUILayout.Foldout(GetOrSetFalseIfNot(descriptionFoldouts,partName),"Description"))
                 {
                     targetTerms[description].TermType = eTermType.Text;
                     ShowTermEditorFor(targetTerms, description, targetLanguages);
@@ -310,15 +288,12 @@ namespace ksp2community.ksp2unitytools.editor
                     removeAtIndices.Add(manufacturer);
                     removeAtIndices.Add(description);
                 }
-
                 DrawThinHorizontalLine();
             }
-
             for (var i = removeAtIndices.Count - 1; i >= 0; i--)
             {
                 targetTerms.RemoveAt(removeAtIndices[i]);
             }
-
             if (GUILayout.Button("Add Part"))
             {
                 targetTerms.Add(new TermData()
@@ -342,10 +317,8 @@ namespace ksp2community.ksp2unitytools.editor
                     TermType = eTermType.Text
                 });
             }
-
             DrawHorizontalLine();
-            mSource.SetValue(targetObject);
-            serializedObject.ApplyModifiedProperties();
+
         }
 
         private static void ShowTermEditorFor(List<TermData> terms, int index, List<LanguageData> languages)

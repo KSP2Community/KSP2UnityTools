@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using KSP;
@@ -11,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace ksp2community.ksp2unitytools.editor
+namespace ksp2community.ksp2unitytools.editor.CustomEditors
 {
     [CustomEditor(typeof(CoreCelestialBodyData))]
     public class CelestialBodyEditor : UnityEditor.Editor

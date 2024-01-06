@@ -2,17 +2,14 @@
 using System.Reflection;
 using KSP;
 using KSP.IO;
-using KSP.Modules;
 using KSP.Sim.Definitions;
 using ksp2community.ksp2unitytools.editor.API;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
-using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
-namespace ksp2community.ksp2unitytools.editor
+namespace ksp2community.ksp2unitytools.editor.CustomEditors
 {
     [CustomEditor(typeof(CorePartData))]
     public class PartEditor : UnityEditor.Editor

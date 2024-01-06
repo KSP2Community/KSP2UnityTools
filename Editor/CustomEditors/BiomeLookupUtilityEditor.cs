@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using KSP.Rendering.Planets;
 using ksp2community.ksp2unitytools.editor.ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
-namespace ksp2community.ksp2unitytools.editor
+namespace ksp2community.ksp2unitytools.editor.CustomEditors
 {
     [CustomEditor(typeof(BiomeLookupUtility))]
     public class BiomeLookupUtilityEditor : UnityEditor.Editor
@@ -59,7 +58,8 @@ namespace ksp2community.ksp2unitytools.editor
                         });
                     }
 
-                    AssetDatabase.CreateAsset(lut, AssetDatabase.GenerateUniqueAssetPath(path + $"/{lutName}.asset"));
+                    if (File.Exists(path + $"/{lutName}.asset")) AssetDatabase.DeleteAsset(path + $"/{lutName}.asset");
+                    AssetDatabase.CreateAsset(lut, path + $"/{lutName}.asset");
                     for (var y = 0; y < 256; y++)
                     {
                         var baseIndex = y * 256;
@@ -75,9 +75,8 @@ namespace ksp2community.ksp2unitytools.editor
                             };
                         }
                     }
-
-                    AssetDatabase.CreateAsset(hashmap,
-                        AssetDatabase.GenerateUniqueAssetPath(path + $"/{hashMapName}.asset"));
+                    if (File.Exists(path + $"/{hashMapName}.asset")) AssetDatabase.DeleteAsset(path + $"/{hashMapName}.asset");
+                    AssetDatabase.CreateAsset(hashmap,path + $"/{hashMapName}.asset");
                 }
                 finally
                 {
