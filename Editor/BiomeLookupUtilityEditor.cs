@@ -79,10 +79,6 @@ namespace ksp2community.ksp2unitytools.editor
                     AssetDatabase.CreateAsset(hashmap,
                         AssetDatabase.GenerateUniqueAssetPath(path + $"/{hashMapName}.asset"));
                 }
-                catch (Exception e)
-                {
-                    throw;
-                }
                 finally
                 {
                     EditorUtility.ClearProgressBar();
