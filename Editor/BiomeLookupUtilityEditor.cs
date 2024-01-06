@@ -81,7 +81,7 @@ namespace ksp2community.ksp2unitytools.editor
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    throw;
                 }
                 finally
                 {
