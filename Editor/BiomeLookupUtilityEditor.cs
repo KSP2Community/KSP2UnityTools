@@ -24,7 +24,9 @@ namespace ksp2community.ksp2unitytools.editor
             var hashMapName = HashMapNames.TryGetValue(Target.name, out var newHashMapName)
                 ? newHashMapName
                 : $"{Target.name} Hashmap";
+            HashMapNames[Target.name] = hashMapName = EditorGUILayout.TextField("Hash Map Name", hashMapName);
             var lutName = LutNames.TryGetValue(Target.name, out var newLutName) ? newLutName : $"{Target.name} LUT";
+            LutNames[Target.name] = lutName = EditorGUILayout.TextField("LUT Name", lutName);
             if (GUILayout.Button("Bake"))
             {
                 var path = AssetDatabase.GetAssetPath(Target);
