@@ -47,8 +47,7 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
                 var indexColor = colorMapping[i].color;
                 var distanceSquared = (col.r - indexColor.r) * (col.r - indexColor.r) +
                                       (col.g - indexColor.g) * (col.g - indexColor.g) +
-                                      (col.b - indexColor.b) * (col.b - indexColor.b) +
-                                      (col.a - indexColor.a) * (col.a - indexColor.a);
+                                      (col.b - indexColor.b) * (col.b - indexColor.b);
                 if (!(distanceSquared < closestDistance)) continue;
                 closestDistance = distanceSquared;
                 bestIndex = i;
