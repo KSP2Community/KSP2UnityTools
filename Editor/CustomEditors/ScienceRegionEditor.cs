@@ -3,6 +3,8 @@ using KSP.Game.Science;
 using KSP.IO;
 using ksp2community.ksp2unitytools.editor.API;
 using ksp2community.ksp2unitytools.editor.ScriptableObjects;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -59,16 +61,16 @@ namespace ksp2community.ksp2unitytools.editor.CustomEditors
                     path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
                 }
 
-                var jsonData = IOProvider.ToJson(Target.information);
+                var jsonData = JObject.Parse(IOProvider.ToJson(Target.information)).ToString(Formatting.Indented);
                 File.WriteAllText($"{path}/{jsonName}.json", jsonData);
                 AssetDatabase.ImportAsset($"{path}/{jsonName}.json");
                 AddressablesTools.MakeAddressable($"{path}/{jsonName}.json", $"{jsonName}.json", "science_region");
-                jsonData = IOProvider.ToJson(new CelestialBodyBakedDiscoverables
+                jsonData = JObject.Parse(IOProvider.ToJson(new CelestialBodyBakedDiscoverables
                 {
                     BodyName = Target.information.BodyName,
                     Version = Target.information.Version,
                     Discoverables = Target.discoverables.ToArray()
-                });
+                })).ToString(Formatting.Indented);
                 File.WriteAllText($"{path}/{discoverablesName}.json", jsonData);
                 AssetDatabase.ImportAsset($"{path}/{discoverablesName}.json");
                 AddressablesTools.MakeAddressable($"{path}/{discoverablesName}.json", $"{discoverablesName}.json", "science_region_discoverables");
@@ -76,9 +78,10 @@ namespace ksp2community.ksp2unitytools.editor.CustomEditors
                 regionMap.Width = Target.scienceRegionMap.width;
                 regionMap.Height = Target.scienceRegionMap.height;
                 regionMap.MapData = Target.GetIndices();
+                regionMap.BodyName = Target.information.BodyName;
                 if (File.Exists(path + $"/{bakedRegionsName}.asset")) AssetDatabase.DeleteAsset(path + $"/{bakedRegionsName}.asset");
                 AssetDatabase.CreateAsset(regionMap,path + $"/{bakedRegionsName}.asset");
-                AddressablesTools.MakeAddressable($"{path}/{bakedRegionsName}.json", $"{bakedRegionsName}",
+                AddressablesTools.MakeAddressable($"{path}/{bakedRegionsName}.asset", $"{bakedRegionsName}",
                     "science_region_map");
                 AssetDatabase.Refresh();
             }
