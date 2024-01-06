@@ -14,7 +14,7 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
         public ScienceRegionDataInformation information = new();
         public List<CelestialBodyDiscoverablePosition> discoverables = new();
         
-        private int ConvertToIndex(Color col)
+        private byte ConvertToIndex(Color col)
         {
             var bestIndex = 0;
             var closestDistance = float.MaxValue;
@@ -28,12 +28,12 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
                 closestDistance = distanceSquared;
                 bestIndex = region.MapId;
             }
-            return bestIndex;
+            return (byte)bestIndex;
         }
 
         public byte[] GetIndices() => !scienceRegionMap.isReadable
             ? new byte[scienceRegionMap.width * scienceRegionMap.height]
-            : scienceRegionMap.GetPixels().Select(ConvertToIndex).Cast<byte>().ToArray();
+            : scienceRegionMap.GetPixels().Select(ConvertToIndex).ToArray();
 
 
         [Serializable]
