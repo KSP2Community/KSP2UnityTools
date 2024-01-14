@@ -103,6 +103,8 @@ namespace ksp2community.ksp2unitytools.editor
                 ["description"] = description,
                 ["source"] = source,
                 ["version"] = version,
+                ["version_check"] = versionCheck,
+                ["ksp2_version"] = ksp2Version,
                 ["dependencies"] = deps,
                 ["conflicts"] = conflicts
             };
