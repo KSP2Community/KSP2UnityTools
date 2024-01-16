@@ -28,6 +28,7 @@ namespace ksp2community.ksp2unitytools.editor.CustomEditors
             base.OnInspectorGUI();
             GUILayout.Label("PQS Decal Data Baking", EditorStyles.boldLabel);
             var dataName = PqsDecalNames.TryGetValue(Target.name, out var newDataName) ? newDataName : "NewPQSData";
+            PqsDecalNames[Target.name] = dataName = EditorGUILayout.TextField("Data Asset Name", dataName);
             if (GUILayout.Button("Bake"))
             {
                 var decalData = CreateInstance<PQSDecalData>();
