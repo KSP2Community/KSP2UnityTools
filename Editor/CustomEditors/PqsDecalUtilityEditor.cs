@@ -19,6 +19,7 @@ namespace ksp2community.ksp2unitytools.editor.CustomEditors
         private static (ushort[] data, int width, int height) GetDataFrom(Texture2D texture16)
         {
             var rawData = texture16.GetRawTextureData<ushort>();
+            Debug.Log($"Native Length: {rawData.Length}, Target Length: {texture16.width}, {texture16.height}");
             var data = new ushort[texture16.width * texture16.height];
             rawData.CopyTo(data);
             return (data, texture16.width, texture16.height);
