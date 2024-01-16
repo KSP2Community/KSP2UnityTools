@@ -42,6 +42,7 @@ namespace ksp2community.ksp2unitytools.editor.ScriptableObjects
             public string Version;
             public string BodyName;
             public CBSituationData SituationData;
+            [JsonProperty(PropertyName = "Regions")]
             public ExtendedScienceRegionDefinition[] ScienceRegionDefinitions;
         }
 
